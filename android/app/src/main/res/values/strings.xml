@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Papier Kamień</string>
+    <string name="camera_permission_title">Camera access</string>
+    <string name="camera_permission_body">Point the camera at your hand to classify rock, paper, or scissors.</string>
+    <string name="camera_permission_cta">Allow camera</string>
+    <string name="prediction_idle">Show a hand gesture</string>
+    <string name="confidence_label">Confidence</string>
+</resources>
