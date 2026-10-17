@@ -12,7 +12,7 @@ def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--checkpoint", required=True)
     p.add_argument("--out-dir", default="outputs/export")
-    p.add_argument("--image-size", type=int, default=128)
+    p.add_argument("--image-size", type=int, default=224)
     p.add_argument("--android-assets", default="android/app/src/main/assets")
     return p.parse_args()
 
@@ -26,7 +26,7 @@ def main():
     class_names = ckpt["class_names"]
     image_size = int(ckpt.get("image_size", args.image_size))
 
-    model = build_model(num_classes=len(class_names))
+    model = build_model(num_classes=len(class_names), pretrained=False)
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
 

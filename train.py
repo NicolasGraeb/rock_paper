@@ -11,7 +11,7 @@ from sklearn.metrics import ConfusionMatrixDisplay
 
 from src.data import create_dataloaders
 from src.engine import train_model
-from src.model import build_model
+from src.model import MODEL_NAME, build_model
 
 
 def parse_args():
@@ -22,12 +22,13 @@ def parse_args():
     p.add_argument("--run-name", default="baseline")
     p.add_argument("--epochs", type=int, default=10)
     p.add_argument("--batch-size", type=int, default=32)
-    p.add_argument("--image-size", type=int, default=128)
+    p.add_argument("--image-size", type=int, default=224)
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--weight-decay", type=float, default=1e-4)
     p.add_argument("--val-ratio", type=float, default=0.2)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--num-workers", type=int, default=0)
+    p.add_argument("--pretrained", action=argparse.BooleanOptionalAction, default=True)
     return p.parse_args()
 
 
@@ -86,7 +87,7 @@ def main():
         seed=args.seed,
         num_workers=args.num_workers,
     )
-    model = build_model(num_classes=len(class_names))
+    model = build_model(num_classes=len(class_names), pretrained=args.pretrained)
 
     mlflow.set_tracking_uri(args.tracking_uri)
     mlflow.set_experiment(args.experiment)
@@ -104,7 +105,9 @@ def main():
                 "seed": args.seed,
                 "num_classes": len(class_names),
                 "class_names": ",".join(class_names),
-                "model": "SmallCNN",
+                "model": MODEL_NAME,
+                "variant": args.run_name,
+                "pretrained": args.pretrained,
                 "optimizer": "AdamW",
                 "device": str(device),
                 "train_size": len(train_loader.dataset),
@@ -219,7 +222,9 @@ def main():
                     "model_state_dict": model.state_dict(),
                     "class_names": class_names,
                     "image_size": args.image_size,
-                    "model_name": "SmallCNN",
+                    "model_name": MODEL_NAME,
+                    "variant": args.run_name,
+                    "pretrained": args.pretrained,
                 },
                 model_path,
             )

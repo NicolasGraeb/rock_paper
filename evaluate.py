@@ -22,7 +22,7 @@ def parse_args():
     p.add_argument("--experiment", default="papier-kamien")
     p.add_argument("--run-name", default="evaluate")
     p.add_argument("--batch-size", type=int, default=32)
-    p.add_argument("--image-size", type=int, default=128)
+    p.add_argument("--image-size", type=int, default=224)
     p.add_argument("--val-ratio", type=float, default=0.2)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--num-workers", type=int, default=0)
@@ -45,7 +45,7 @@ def main():
         num_workers=args.num_workers,
     )
 
-    model = build_model(num_classes=len(class_names))
+    model = build_model(num_classes=len(class_names), pretrained=False)
     model.load_state_dict(ckpt["model_state_dict"])
     model.to(device)
 
