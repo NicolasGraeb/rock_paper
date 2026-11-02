@@ -1,10 +1,3 @@
-"""Testy spójności: etykiety, splity, preprocessing, transfer learning, metryki.
-
-    uv run pytest -q
-
-Testy na danych pomijane, gdy danego datasetu/checkpointu nie ma na dysku.
-"""
-import hashlib
 import json
 from pathlib import Path
 
@@ -18,18 +11,16 @@ from torchvision import transforms
 
 from src.data import SPLITS, create_dataloaders, create_eval_loader
 from src.engine import compute_classification_metrics, evaluate_model, set_train_mode
+from src.explain import grad_cam, occlusion_sensitivity
 from src.models import MODELS, build_model, get_spec, set_trainable
 from src.transforms import IMAGENET_MEAN, IMAGENET_STD, build_transforms, default_preprocessing
 
 ROOT = Path(__file__).resolve().parents[1]
-HAGRID = ROOT / "dataset" / "dataset_origin_new"
+HAGRID = ROOT / "dataset" / "hagrid_user_split"
 CLASSES = ["paper", "rock", "scissors"]
-EXTERNAL = [d for d in (ROOT / "dataset").glob("external_*") if (d / "split.csv").exists()]
 
-needs_hagrid = pytest.mark.skipif(not HAGRID.is_dir(), reason="brak dataset/dataset_origin_new")
+needs_hagrid = pytest.mark.skipif(not HAGRID.is_dir(), reason="brak dataset/hagrid_user_split")
 
-
-# etykiety i splity
 
 @needs_hagrid
 def test_hagrid_classes_identical_in_all_splits():
@@ -44,7 +35,6 @@ def test_hagrid_label_mapping_matches_source_gestures():
     split = pd.read_csv(HAGRID / "split.csv")
     expected = {"fist": "rock", "palm": "paper", "peace": "scissors"}
     assert (split["gesture"].map(expected) == split["label"]).all()
-    # etykieta w ścieżce = etykieta w split.csv
     assert (split["path"].str.split("/").str[1] == split["label"]).all()
 
 
@@ -55,39 +45,37 @@ def test_hagrid_split_csv_matches_disk_and_groups_not_shared():
     assert on_disk == set(split["path"])
     assert split["path"].is_unique
     assert split.groupby("group")["split"].nunique().max() == 1
-    assert split.groupby("source")["split"].nunique().max() == 1  # ten sam obraz źródłowy tylko w jednym splicie
+    assert split.groupby("source")["split"].nunique().max() == 1
 
 
 @needs_hagrid
-def test_hagrid_loaders_use_augmentation_only_for_train():
+def test_hagrid_no_person_in_two_splits_and_expected_sizes():
+    split = pd.read_csv(HAGRID / "split.csv")
+    assert split["user_id"].notna().all()
+    assert split.groupby("user_id")["split"].nunique().max() == 1
+    assert split["split"].value_counts().to_dict() == {"train": 14725, "val": 2945, "test": 2940}
+    per_class = split.groupby(["split", "label"]).size().unstack()
+    assert (per_class.max(axis=1) - per_class.min(axis=1)).max() <= 1
+
+
+@needs_hagrid
+@needs_hagrid
+def test_hagrid_loaders_have_no_augmentation():
     loaders, classes = create_dataloaders(HAGRID, batch_size=4)
     assert classes == CLASSES
-    random_ops = (transforms.RandomHorizontalFlip, transforms.RandomRotation, transforms.ColorJitter)
     for s, loader in loaders.items():
         ops = loader.dataset.transform.transforms
-        has_aug = any(isinstance(t, random_ops) for t in ops)
-        assert has_aug == (s == "train"), s
+        assert [type(t) for t in ops] == [transforms.Resize, transforms.ToTensor, transforms.Normalize], s
         assert loader.dataset.class_to_idx == {c: i for i, c in enumerate(CLASSES)}
+        x1, _ = loader.dataset[0]
+        x2, _ = loader.dataset[0]
+        assert torch.equal(x1, x2), s
 
-
-@pytest.mark.parametrize("ext", EXTERNAL, ids=lambda d: d.name)
-def test_external_dataset_consistent(ext):
-    split = pd.read_csv(ext / "split.csv")
-    assert set(split["split"]) <= {"external_dev", "external_test"}
-    assert set(split["label"]) <= set(CLASSES)
-    assert split.groupby("group")["split"].nunique().max() == 1
-    assert split["source_md5"].is_unique
-    if HAGRID.is_dir():
-        hagrid_md5 = {hashlib.md5(f.read_bytes()).hexdigest() for f in HAGRID.rglob("*.jp*g")}
-        assert not (set(split["source_md5"]) & hagrid_md5), "plik zewnętrzny występuje w danych treningowych"
-
-
-# preprocessing
 
 def test_eval_transform_is_deterministic_and_normalized():
     from PIL import Image
     img = Image.fromarray(np.random.default_rng(0).integers(0, 255, (300, 200, 3), dtype=np.uint8))
-    tf = build_transforms(224, train=False)
+    tf = build_transforms(224)
     a, b = tf(img), tf(img)
     assert a.shape == (3, 224, 224) and torch.equal(a, b)
     raw = transforms.ToTensor()(img.resize((224, 224), Image.BILINEAR))
@@ -106,8 +94,6 @@ def test_old_checkpoints_default_to_imagenet_preprocessing():
     assert default_preprocessing(224) == {"image_size": 224, "resize": "square",
                                           "mean": list(IMAGENET_MEAN), "std": list(IMAGENET_STD)}
 
-
-# transfer learning
 
 def test_feature_extraction_trains_only_classifier():
     m = build_model("mobilenet_v3_small", 3, pretrained=False)
@@ -140,13 +126,11 @@ def test_frozen_batchnorm_stays_in_eval_and_keeps_stats():
     assert all(not b.training for b in m.modules() if isinstance(b, nn.BatchNorm2d))
 
 
-# metryki
-
 def test_loss_is_sample_weighted_over_whole_dataset():
     torch.manual_seed(0)
     x, y = torch.randn(10, 5), torch.randint(0, 3, (10,))
     model = nn.Linear(5, 3)
-    loader = DataLoader(TensorDataset(x, y), batch_size=4)  # batche 4, 4, 2
+    loader = DataLoader(TensorDataset(x, y), batch_size=4)
     metrics, y_true, y_pred = evaluate_model(model, loader, torch.device("cpu"), class_names=CLASSES)
     with torch.no_grad():
         full = nn.functional.cross_entropy(model(x), y).item()
@@ -161,18 +145,29 @@ def test_confusion_matrix_keeps_all_classes_when_one_missing():
     assert set(CLASSES) <= set(m["classification_report"])
 
 
-def test_eval_loader_maps_labels_by_name(tmp_path):
+def test_eval_loader_rejects_different_classes(tmp_path):
     from PIL import Image
-    for cls in ("rock", "scissors"):  # podzbiór klas, inna kolejność indeksów niż w ImageFolder
-        (tmp_path / "external_dev" / cls).mkdir(parents=True)
-        Image.new("RGB", (32, 32)).save(tmp_path / "external_dev" / cls / "a.jpg")
-    loader = create_eval_loader(tmp_path, "external_dev", CLASSES, default_preprocessing(32))
-    assert sorted(t for _, t in loader.dataset.samples) == [CLASSES.index("rock"), CLASSES.index("scissors")]
+    for cls in CLASSES:
+        (tmp_path / "test" / cls).mkdir(parents=True)
+        Image.new("RGB", (32, 32)).save(tmp_path / "test" / cls / "a.jpg")
+    loader = create_eval_loader(tmp_path, "test", CLASSES, default_preprocessing(32))
+    assert [t for _, t in loader.dataset.samples] == [0, 1, 2]
     with pytest.raises(ValueError):
-        create_eval_loader(tmp_path, "external_dev", ["paper", "rock"], default_preprocessing(32))
+        create_eval_loader(tmp_path, "test", ["rock", "paper", "scissors"], default_preprocessing(32))
 
 
 def test_registry_models_build_with_three_classes():
     for name in MODELS:
         m = build_model(name, 3, pretrained=False)
         assert m(torch.randn(2, 3, 64, 64)).shape == (2, 3)
+
+
+def test_gradcam_and_occlusion_shapes():
+    torch.manual_seed(0)
+    m = build_model("mobilenet_v3_small", 3, pretrained=False).eval()
+    x = torch.randn(2, 3, 96, 96)
+    cams, logits = grad_cam(m, x)
+    assert cams.shape == (2, 96, 96) and logits.shape == (2, 3)
+    assert cams.min() >= 0 and cams.max() <= 1
+    occ = occlusion_sensitivity(m, x[:1], class_idx=0, patch=32, stride=32)
+    assert occ.shape == (96, 96)

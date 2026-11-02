@@ -1,0 +1,10 @@
+{
+  "n_images": 500,
+  "max_abs_diff_logits": 7.2479248046875e-05,
+  "max_abs_diff_probs": 1.6093254089355469e-06,
+  "prediction_agreement": 1.0,
+  "accuracy_pytorch": 0.996,
+  "accuracy_onnx": 0.996,
+  "onnx_size_mb": 5.811066627502441,
+  "passed": true
+}

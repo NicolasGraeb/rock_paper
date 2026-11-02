@@ -35,7 +35,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -55,8 +54,8 @@ import androidx.core.content.ContextCompat
 import studia.ai_projekt.R
 import studia.ai_projekt.camera.CameraPreview
 import studia.ai_projekt.ml.ClassificationResult
+import studia.ai_projekt.ml.PredictionSmoother
 import studia.ai_projekt.ml.RpsClassifier
-import java.util.concurrent.Executors
 
 @Composable
 fun RpsScreen() {
@@ -79,26 +78,16 @@ fun RpsScreen() {
     }
 
     var prediction by remember { mutableStateOf<ClassificationResult?>(null) }
-    val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
+    val smoother = remember { PredictionSmoother() }
     val mainHandler = remember { Handler(Looper.getMainLooper()) }
-
-    DisposableEffect(Unit) {
-        onDispose { analysisExecutor.shutdown() }
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (hasPermission) {
             CameraPreview(
                 modifier = Modifier.fillMaxSize(),
-                onFrame = { bitmap ->
-                    analysisExecutor.execute {
-                        try {
-                            val result = classifier.classify(bitmap)
-                            mainHandler.post { prediction = result }
-                        } finally {
-                            bitmap.recycle()
-                        }
-                    }
+                onCrop = { crop ->
+                    val result = smoother.update(classifier.classify(crop), classifier.classNames)
+                    mainHandler.post { prediction = result }
                 },
             )
         } else {
@@ -113,20 +102,8 @@ fun RpsScreen() {
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.Bottom,
         ) {
-            Surface(
-                shape = RoundedCornerShape(24.dp),
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
-                tonalElevation = 2.dp,
-            ) {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
-                )
-            }
-
             if (hasPermission) {
                 ResultCard(
                     result = prediction,

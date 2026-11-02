@@ -1,4 +1,4 @@
-# Python-generated files
+#pliki Pythona
 __pycache__/
 *.py[oc]
 build/
@@ -9,23 +9,25 @@ wheels/
 .idea
 archive/
 archive
-# Virtual environments
+#venv
 .venv
 *.onnx
-# EDA cache
+#cache EDA
 outputs/eda/*.npy
 outputs/checkpoints/
 dataset/
 data_cache/
-# narzędzia AI
+#narzędzia AI
 .claude/
 CLAUDE.md
 .cursor/
 .cursorrules
 .cursorignore
-# MLflow
+#MLflow
 *.db
-# modele
+#modele
 *.pt
 *.pth
 *.ckpt
+#zdjęcia do testu na telefonie, robi je export.py
+android/app/src/androidTest/assets/parity/

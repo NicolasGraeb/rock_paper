@@ -18,21 +18,18 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicBoolean
 
+// onCrop: kwadrat ze środka kadru, wywoływane na wątku analizy kamery
 @Composable
 fun CameraPreview(
     modifier: Modifier = Modifier,
-    onFrame: (Bitmap) -> Unit,
+    onCrop: (Bitmap) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
-    val isBusy = remember { AtomicBoolean(false) }
 
     DisposableEffect(Unit) {
-        onDispose {
-            analysisExecutor.shutdown()
-        }
+        onDispose { analysisExecutor.shutdown() }
     }
 
     AndroidView(
@@ -62,19 +59,23 @@ fun CameraPreview(
                         .build()
 
                     analysis.setAnalyzer(analysisExecutor) { imageProxy ->
-                        if (!isBusy.compareAndSet(false, true)) {
-                            imageProxy.close()
-                            return@setAnalyzer
-                        }
                         try {
-                            val bitmap = imageProxy.toBitmap()
-                            val rotated = bitmap.rotate(imageProxy.imageInfo.rotationDegrees.toFloat())
-                            if (rotated !== bitmap) {
-                                bitmap.recycle()
+                            val viewWidth = previewView.width
+                            val viewHeight = previewView.height
+                            if (viewWidth > 0 && viewHeight > 0) {
+                                val frame = imageProxy.toBitmap()
+                                val upright = frame.rotate(imageProxy.imageInfo.rotationDegrees.toFloat())
+                                if (upright !== frame) frame.recycle()
+                                val box = frameCrop(upright.width, upright.height, viewWidth, viewHeight)
+                                val crop = Bitmap.createBitmap(upright, box.left, box.top, box.size, box.size)
+                                if (crop !== upright) upright.recycle()
+                                try {
+                                    onCrop(crop)
+                                } finally {
+                                    crop.recycle()
+                                }
                             }
-                            onFrame(rotated)
                         } finally {
-                            isBusy.set(false)
                             imageProxy.close()
                         }
                     }
@@ -82,7 +83,7 @@ fun CameraPreview(
                     cameraProvider.unbindAll()
                     cameraProvider.bindToLifecycle(
                         lifecycleOwner,
-                        CameraSelector.DEFAULT_BACK_CAMERA,
+                        CameraSelector.DEFAULT_FRONT_CAMERA,
                         preview,
                         analysis,
                     )

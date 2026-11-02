@@ -1,5 +1,8 @@
 {
   "image_size": 224,
+  "resize": "bilinear, do kwadratu image_size x image_size",
+  "color_order": "RGB",
+  "scale": "piksel / 255",
   "mean": [
     0.485,
     0.456,
@@ -16,5 +19,6 @@
     "scissors"
   ],
   "input_name": "input",
-  "output_name": "logits"
+  "output_name": "logits",
+  "source_run_id": "49b032821ce5432bb4b1523cc316c586"
 }

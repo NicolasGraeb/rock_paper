@@ -8,6 +8,7 @@ import mlflow
 import numpy as np
 import torch
 from sklearn.metrics import ConfusionMatrixDisplay
+from codecarbon import OfflineEmissionsTracker
 from tqdm.auto import tqdm
 
 from src.data import create_dataloaders
@@ -15,17 +16,16 @@ from src.engine import MONITORS, evaluate_model, train_model
 from src.models import MODELS, build_model, count_parameters, get_spec, set_trainable
 
 ROOT = Path(__file__).resolve().parent
-# Ścieżka absolutna: runy trafiają do tej samej bazy niezależnie od katalogu, z którego odpalono skrypt
 DEFAULT_TRACKING_URI = f"sqlite:///{(ROOT / 'mlflow.db').as_posix()}"
 
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--data-dir", default=str(ROOT / "dataset" / "dataset_origin"),
+    p.add_argument("--data-dir", default=str(ROOT / "dataset" / "hagrid_user_split"),
                    help="wariant datasetu z podkatalogami train/val/test (patrz load_dataset.py)")
     p.add_argument("--tracking-uri", default=DEFAULT_TRACKING_URI)
-    p.add_argument("--experiment", default="papier-kamien")
-    p.add_argument("--model", choices=list(MODELS), default="vgg_gap_cnn",
+    p.add_argument("--experiment", default="papier-kamien-baseline")
+    p.add_argument("--model", choices=list(MODELS), default="mobilenet_v3_small",
                    help="architektura z rejestru src/models (MODELS)")
     p.add_argument("--run-name", default=None, help="domyślnie nazwa modelu")
     p.add_argument("--epochs", type=int, default=50, help="maksymalna liczba epok (early stopping może skończyć wcześniej)")
@@ -42,10 +42,9 @@ def parse_args():
     p.add_argument("--patience", type=int, default=5,
                    help="early stopping po tylu epokach bez poprawy; 0 = wyłączony")
     p.add_argument("--min-delta", type=float, default=0.0)
-    p.add_argument("--checkpoint-dir", default=str(ROOT / "outputs" / "checkpoints"),
+    p.add_argument("--checkpoint-dir", default=str(ROOT / "outputs" / "baseline" / "checkpoints"),
                    help="best.pt i last.pt zapisywane w <checkpoint-dir>/<run_id>/")
     p.add_argument("--log-every-n-steps", type=int, default=10)
-    # transfer learning (modele z .features/.classifier, np. mobilenet_v3_small)
     p.add_argument("--freeze-features", action="store_true",
                    help="zamroź ekstraktor cech (.features), trenuj tylko .classifier (feature extraction)")
     p.add_argument("--unfreeze-last", type=int, default=0,
@@ -102,6 +101,19 @@ def classification_metrics_to_log(metrics: dict, prefix: str) -> dict:
     return out
 
 
+def energy_tracker() -> OfflineEmissionsTracker:
+    #GPU z NVML, CPU z RAPL, RAM i CO2 szacowane
+    return OfflineEmissionsTracker(country_iso_code="POL", measure_power_secs=1, save_to_file=False,
+                                   log_level="error", gpu_ids=[0])
+
+
+def energy_metrics(tracker: OfflineEmissionsTracker, prefix: str) -> dict:
+    d = tracker.final_emissions_data
+    return {f"{prefix}_energy_kwh": d.energy_consumed, f"{prefix}_energy_gpu_kwh": d.gpu_energy,
+            f"{prefix}_energy_cpu_kwh": d.cpu_energy, f"{prefix}_energy_ram_kwh": d.ram_energy,
+            f"{prefix}_co2_kg": d.emissions, f"{prefix}_duration_s": d.duration}
+
+
 def set_seed(seed: int):
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -114,7 +126,6 @@ def plot_learning_curves(history, out_path: Path, batch_losses=None, steps_per_e
     fig, axes = plt.subplots(1, 3, figsize=(17, 4.5))
 
     if batch_losses and steps_per_epoch:
-        # strata pojedynczych batchy na osi epok (batch i w epoce e -> e - 1 + i / steps_per_epoch)
         x = np.arange(1, len(batch_losses) + 1) / steps_per_epoch
         axes[0].plot(x, batch_losses, color="tab:blue", alpha=0.25, lw=0.8, label="train (batch)")
     axes[0].plot(epochs, history.train_loss, "o-", color="tab:blue", label="train (średnia z epoki)")
@@ -165,8 +176,6 @@ def main():
     dataset_info = load_dataset_info(data_dir)
     dataset_name = dataset_info.get("name", data_dir.name)
     spec = get_spec(args.model)
-    # preprocessing zależny od modelu (normalizacja wag pretrenowanych); zapisywany w checkpoincie,
-    # żeby ewaluacja (także na danych zewnętrznych) używała dokładnie tego samego
     preprocessing = {"image_size": args.image_size, "resize": "square", "mean": list(spec.mean), "std": list(spec.std)}
     loaders, class_names = create_dataloaders(
         data_dir=data_dir,
@@ -241,9 +250,10 @@ def main():
                 "monitor": args.monitor,
                 "patience": patience,
                 "min_delta": args.min_delta,
+                "augmentation": "none",
+                "histogram_equalization": False,
             }
         )
-        # opis i podział datasetu przy runie
         for name in ("dataset_info.json", "split.csv"):
             if (data_dir / name).exists():
                 mlflow.log_artifact(str(data_dir / name), artifact_path="dataset")
@@ -259,6 +269,7 @@ def main():
             "training_mode": mode,
             "dataset": dataset_name,
             "seed": args.seed,
+            "augmentation": "none",
         }
 
         step = 0
@@ -277,7 +288,6 @@ def main():
                 step_losses.clear()
 
         def on_epoch(epoch, train_metrics, val_metrics, history):
-            # krzywa uczenia odświeżana po każdej epoce: lokalnie i w MLflow (podgląd w trakcie treningu)
             plot_learning_curves(history, live_curves_path, batch_losses, steps_per_epoch)
             mlflow.log_artifact(str(live_curves_path))
             mlflow.log_metrics(
@@ -307,6 +317,8 @@ def main():
                 f"val_f1={val_metrics['f1_macro']:.4f}"
             )
 
+        tracker = energy_tracker()
+        tracker.start()
         history, val_metrics, _, _ = train_model(
             model=model,
             train_loader=train_loader,
@@ -325,8 +337,15 @@ def main():
             checkpoint_extra=checkpoint_extra,
             bn_eval=args.bn_eval,
         )
-        # Test oceniany raz, na wagach z najlepszej epoki (wybranej wyłącznie na val)
+        tracker.stop()
+        energy = energy_metrics(tracker, "train")
+        tracker = energy_tracker()
+        tracker.start()
         test_metrics, _, _ = evaluate_model(model, test_loader, device, class_names=class_names)
+        tracker.stop()
+        energy.update(energy_metrics(tracker, "test"))
+        energy["test_energy_wh_per_1000_images"] = energy["test_energy_kwh"] * 1e6 / len(test_loader.dataset)
+        mlflow.log_metrics(energy)
 
         mlflow.log_metrics(
             {
@@ -346,6 +365,8 @@ def main():
             history_path = tmp_dir / "history.json"
 
             plot_learning_curves(history, curves_path, batch_losses, steps_per_epoch)
+            (tmp_dir / "energy.json").write_text(json.dumps(energy, indent=2), encoding="utf-8")
+            mlflow.log_artifact(str(tmp_dir / "energy.json"))
             for split, metrics in (("val", val_metrics), ("test", test_metrics)):
                 cm_path = tmp_dir / f"confusion_matrix_{split}.png"
                 report_path = tmp_dir / f"classification_report_{split}.json"
@@ -405,6 +426,8 @@ def main():
         print(f"best_epoch={history.best_epoch} ({args.monitor}), checkpoints={checkpoint_dir}")
         for split, metrics in (("val", val_metrics), ("test", test_metrics)):
             print(f"{split}: accuracy={metrics['accuracy']:.4f} f1_macro={metrics['f1_macro']:.4f} loss={metrics['loss']:.4f}")
+        print(f"energia: trening {energy['train_energy_kwh'] * 1000:.1f} Wh ({energy['train_duration_s'] / 60:.1f} min), "
+              f"test {energy['test_energy_wh_per_1000_images']:.3f} Wh / 1000 obrazów, CO2 trening {energy['train_co2_kg'] * 1000:.1f} g")
 
 
 if __name__ == "__main__":

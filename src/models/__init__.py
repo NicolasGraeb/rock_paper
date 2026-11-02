@@ -1,31 +1,24 @@
-"""Rejestr modeli. Nowy model = nowy plik w src/models/ + jeden wpis w MODELS.
-
-Builder ma sygnaturę (num_classes, pretrained) -> nn.Module.
-"""
 from dataclasses import dataclass
 from typing import Callable
 
 from torch import nn
 
 from src.models.mobilenet import MOBILENET_V3_SMALL_MEAN, MOBILENET_V3_SMALL_STD, build_mobilenet_v3_small
-from src.models.vgg_gap_cnn import build_vgg_gap_cnn
 from src.transforms import IMAGENET_MEAN, IMAGENET_STD
 
 
 @dataclass(frozen=True)
 class ModelSpec:
     builder: Callable[[int, bool], nn.Module]
-    supports_pretrained: bool  # czy istnieją wagi pretrenowane (ImageNet)
-    default_lr: float          # używany, gdy nie podano --lr
-    mean: tuple = IMAGENET_MEAN  # normalizacja wejścia; dla modeli pretrenowanych ta z ich wag
+    supports_pretrained: bool
+    default_lr: float
+    mean: tuple = IMAGENET_MEAN
     std: tuple = IMAGENET_STD
 
 
 MODELS = {
     "mobilenet_v3_small": ModelSpec(build_mobilenet_v3_small, supports_pretrained=True, default_lr=3e-4,
                                     mean=MOBILENET_V3_SMALL_MEAN, std=MOBILENET_V3_SMALL_STD),
-    # trenowany od zera; ImageNet mean/std użyte historycznie, zostaje dla zgodności z checkpointami
-    "vgg_gap_cnn": ModelSpec(build_vgg_gap_cnn, supports_pretrained=False, default_lr=1e-3),
 }
 
 
@@ -43,11 +36,6 @@ def build_model(name: str, num_classes: int, pretrained: bool = False) -> nn.Mod
 
 
 def set_trainable(model: nn.Module, freeze_features: bool, unfreeze_last: int = 0) -> None:
-    """Transfer learning dla modeli z `.features` (ekstraktor cech) i `.classifier` (głowa).
-
-    freeze_features=True, unfreeze_last=0 -> feature extraction: uczy się tylko `.classifier`.
-    unfreeze_last=k -> fine-tuning: dodatkowo ostatnie k bloków `.features`.
-    """
     if not freeze_features:
         return
     if not hasattr(model, "features"):

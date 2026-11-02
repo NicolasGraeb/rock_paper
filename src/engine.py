@@ -28,7 +28,6 @@ class History:
     stopped_early: bool = False
 
 
-# monitor -> (klucz w metrykach walidacyjnych, czy większa wartość jest lepsza)
 MONITORS = {
     "val_loss": ("loss", False),
     "val_f1_macro": ("f1_macro", True),
@@ -37,11 +36,7 @@ MONITORS = {
 
 
 def set_train_mode(model: nn.Module, train: bool, bn_eval: bool = False) -> None:
-    """model.train(train), ale BatchNorm z zamrożonymi parametrami (lub wszystkie przy bn_eval) zostaje w eval.
-
-    Samo requires_grad=False nie wystarcza: w trybie train BN dalej aktualizuje running_mean/var,
-    więc „zamrożony” ekstraktor cech zmieniałby się mimo braku gradientów.
-    """
+    """Jak model.train(train), ale BatchNorm zamrożonych warstw (albo wszystkie przy bn_eval) zostaje w eval."""
     model.train(train)
     if not train:
         return
@@ -65,7 +60,7 @@ def _run_epoch(
 ):
     train = optimizer is not None
     set_train_mode(model, train, bn_eval)
-    loss_sum = 0.0  # suma po próbkach, bo ostatni batch bywa niepełny
+    loss_sum = 0.0
     preds_all = []
     targets_all = []
     probs_all = []
@@ -103,7 +98,6 @@ def _run_epoch(
 
     y_pred = np.concatenate(preds_all)
     y_true = np.concatenate(targets_all)
-    # metryki z predykcji całego zbioru (nie średnie po batchach)
     metrics = compute_classification_metrics(y_true, y_pred)
     metrics["loss"] = loss_sum / n_seen
     if return_probs:
@@ -112,8 +106,6 @@ def _run_epoch(
 
 
 def compute_classification_metrics(y_true, y_pred, class_names=None):
-    # przy podanych klasach macierz pomyłek i raport zawsze mają wszystkie klasy,
-    # także gdy w zbiorze (np. zewnętrznym) którejś brakuje
     labels = list(range(len(class_names))) if class_names is not None else None
     report = classification_report(
         y_true,
@@ -154,7 +146,6 @@ def evaluate_model(
     class_names=None,
     return_probs: bool = False,
 ):
-    """Metryki na całym zbiorze. Przy return_probs metryki zawierają też "probs" (N x C, softmax)."""
     criterion = nn.CrossEntropyLoss()
     metrics, y_true, y_pred = _run_epoch(
         model, loader, criterion, device, optimizer=None, return_probs=return_probs
@@ -186,14 +177,6 @@ def train_model(
     checkpoint_extra: dict | None = None,
     bn_eval: bool = False,
 ):
-    """Trenuje model, wybierając najlepszą epokę wg `monitor` na zbiorze walidacyjnym.
-
-    - `patience`: early stopping po tylu epokach bez poprawy (None = trenuj wszystkie epoki).
-    - `checkpoint_dir`: po każdej epoce zapisuje `last.pt` (z optymalizatorem), a przy poprawie `best.pt`.
-    - Optymalizowane są tylko parametry z requires_grad (zamrożone warstwy przy transfer learningu pomijane);
-      BatchNorm zamrożonych warstw (albo wszystkie przy `bn_eval`) pozostaje w trybie eval.
-    Po treningu model ma wagi z najlepszej epoki.
-    """
     metric_key, higher_is_better = MONITORS[monitor]
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.AdamW(

@@ -1,0 +1,19 @@
+train-00000-of-00008-742bce0f9da71c83.parquet: 5250 obrazów z wybranych gestów
+train-00001-of-00008-35301bb545936fe3.parquet: 1632 obrazów z wybranych gestów
+train-00002-of-00008-08a4580cc458cb78.parquet: 0 obrazów z wybranych gestów
+train-00003-of-00008-19ce0436f53308fe.parquet: 0 obrazów z wybranych gestów
+train-00004-of-00008-1699aab0cdaf3924.parquet: 12282 obrazów z wybranych gestów
+train-00005-of-00008-c1166c0397a7b3c7.parquet: 1733 obrazów z wybranych gestów
+train-00006-of-00008-880ff929d65d5990.parquet: 0 obrazów z wybranych gestów
+train-00007-of-00008-d36af32a50e189e3.parquet: 0 obrazów z wybranych gestów
+bez user_id w adnotacjach: 199 obrazów, pominięte
+przed balansowaniem: {'paper': 6929, 'rock': 6870, 'scissors': 6899}
+po balansowaniu: 6870 na klasę, razem 20610
+6225 osób
+6184 grup, 82.8% obrazów w seriach, największa seria: 319
+label  paper  rock  scissors  razem  udział
+split                                      
+train   4908  4909      4908  14725   0.714
+val      982   981       982   2945   0.143
+test     980   980       980   2940   0.143
+zapisano: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split
