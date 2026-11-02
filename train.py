@@ -250,7 +250,7 @@ def main():
                 "monitor": args.monitor,
                 "patience": patience,
                 "min_delta": args.min_delta,
-                "augmentation": "none",
+                "augmentation": dataset_info.get("transform") or "none",
                 "histogram_equalization": False,
             }
         )
@@ -269,7 +269,7 @@ def main():
             "training_mode": mode,
             "dataset": dataset_name,
             "seed": args.seed,
-            "augmentation": "none",
+            "augmentation": dataset_info.get("transform") or "none",
         }
 
         step = 0
