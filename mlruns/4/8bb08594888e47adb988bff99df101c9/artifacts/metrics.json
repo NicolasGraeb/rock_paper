@@ -1,0 +1,28 @@
+{
+  "accuracy": 0.61,
+  "precision_macro": 0.6328671328671329,
+  "recall_macro": 0.6116095612134345,
+  "f1_macro": 0.5948573050752729,
+  "precision_weighted": 0.6398688811188812,
+  "recall_weighted": 0.61,
+  "f1_weighted": 0.5971350478606849,
+  "confusion_matrix": [
+    [
+      37,
+      12,
+      22
+    ],
+    [
+      0,
+      60,
+      5
+    ],
+    [
+      7,
+      32,
+      25
+    ]
+  ],
+  "loss": 1.8535150742530824,
+  "ms_per_image": null
+}

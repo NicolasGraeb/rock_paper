@@ -4,8 +4,8 @@ from pathlib import Path
 
 import torch
 
-from src.model import build_model
-from src.transforms import IMAGENET_MEAN, IMAGENET_STD
+from src.models import build_model
+from src.transforms import default_preprocessing
 
 
 def parse_args():
@@ -26,7 +26,7 @@ def main():
     class_names = ckpt["class_names"]
     image_size = int(ckpt.get("image_size", args.image_size))
 
-    model = build_model(num_classes=len(class_names), pretrained=False)
+    model = build_model(ckpt.get("model_name", "mobilenet_v3_small"), num_classes=len(class_names))
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
 
@@ -42,10 +42,11 @@ def main():
         dynamo=False,
     )
 
+    ckpt_pre = ckpt.get("preprocessing") or default_preprocessing(image_size)  # normalizacja z treningu
     preprocessing = {
         "image_size": image_size,
-        "mean": list(IMAGENET_MEAN),
-        "std": list(IMAGENET_STD),
+        "mean": list(ckpt_pre["mean"]),
+        "std": list(ckpt_pre["std"]),
         "class_names": class_names,
         "input_name": "input",
         "output_name": "logits",

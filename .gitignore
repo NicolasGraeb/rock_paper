@@ -12,3 +12,20 @@ archive
 # Virtual environments
 .venv
 *.onnx
+# EDA cache
+outputs/eda/*.npy
+outputs/checkpoints/
+dataset/
+data_cache/
+# narzędzia AI
+.claude/
+CLAUDE.md
+.cursor/
+.cursorrules
+.cursorignore
+# MLflow
+*.db
+# modele
+*.pt
+*.pth
+*.ckpt

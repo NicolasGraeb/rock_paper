@@ -1,0 +1,33 @@
+{
+  "paper": {
+    "precision": 0.6712328767123288,
+    "recall": 0.6901408450704225,
+    "f1-score": 0.6805555555555556,
+    "support": 71.0
+  },
+  "rock": {
+    "precision": 0.6086956521739131,
+    "recall": 0.8615384615384616,
+    "f1-score": 0.7133757961783439,
+    "support": 65.0
+  },
+  "scissors": {
+    "precision": 0.6,
+    "recall": 0.328125,
+    "f1-score": 0.42424242424242425,
+    "support": 64.0
+  },
+  "accuracy": 0.63,
+  "macro avg": {
+    "precision": 0.6266428429620806,
+    "recall": 0.6266014355362947,
+    "f1-score": 0.6060579253254413,
+    "support": 200.0
+  },
+  "weighted avg": {
+    "precision": 0.6281137581893985,
+    "recall": 0.63,
+    "f1-score": 0.6092019317377598,
+    "support": 200.0
+  }
+}

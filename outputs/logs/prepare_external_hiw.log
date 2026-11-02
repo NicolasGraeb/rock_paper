@@ -1,0 +1,15 @@
+pobieram paper.rar (230 MB)
+paper: 135 zdjêæ, inne pliki (np. adnotacje): brak
+pobieram rock.rar (207 MB)
+rock: 121 zdjêæ, inne pliki (np. adnotacje): brak
+pobieram scissors.rar (216 MB)
+scissors: 129 zdjêæ, inne pliki (np. adnotacje): brak
+385 zdjêæ, po usuniêciu dok³adnych duplikatów: 385
+kontrola nak³adania: 20646 obrazów z C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin_new
+nak³adanie z dataset_origin_new: max korelacja 0.798, usuniêtych 0 (próg 0.95, MD5: 0)
+11 grup (osoby/sesje): {'exif:iPhone 8 Plus:4': 85, 'exif:iPhone 8 Plus:2': 60, 'exif:iPhone 8 Plus:3': 56, 'exif:iPhone 8 Plus:1': 55, 'exif:iPhone 8 Plus:7': 52, 'exif:iPhone 8 Plus:5': 38, 'exif:iPhone 8 Plus:0': 18, 'exif:iPhone 8 Plus:9': 6, 'exif:iPhone 8 Plus:10': 6, 'exif:iPhone 8 Plus:8': 5, 'exif:iPhone 8 Plus:6': 4}
+label          paper  rock  scissors  razem
+split                                      
+external_dev      71    65        64    200
+external_test     64    56        65    185
+zapisano: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\external_hiw (sprawdŸ preview_<klasa>.jpg — czy gesty odpowiadaj¹ etykietom)

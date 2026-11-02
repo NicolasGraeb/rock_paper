@@ -8,28 +8,98 @@ import mlflow
 import numpy as np
 import torch
 from sklearn.metrics import ConfusionMatrixDisplay
+from tqdm.auto import tqdm
 
 from src.data import create_dataloaders
-from src.engine import train_model
-from src.model import MODEL_NAME, build_model
+from src.engine import MONITORS, evaluate_model, train_model
+from src.models import MODELS, build_model, count_parameters, get_spec, set_trainable
+
+ROOT = Path(__file__).resolve().parent
+# Ścieżka absolutna: runy trafiają do tej samej bazy niezależnie od katalogu, z którego odpalono skrypt
+DEFAULT_TRACKING_URI = f"sqlite:///{(ROOT / 'mlflow.db').as_posix()}"
 
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--data-dir", default="archive/rps-cv-images")
-    p.add_argument("--tracking-uri", default="sqlite:///mlflow.db")
+    p.add_argument("--data-dir", default=str(ROOT / "dataset" / "dataset_origin"),
+                   help="wariant datasetu z podkatalogami train/val/test (patrz load_dataset.py)")
+    p.add_argument("--tracking-uri", default=DEFAULT_TRACKING_URI)
     p.add_argument("--experiment", default="papier-kamien")
-    p.add_argument("--run-name", default="baseline")
-    p.add_argument("--epochs", type=int, default=10)
+    p.add_argument("--model", choices=list(MODELS), default="vgg_gap_cnn",
+                   help="architektura z rejestru src/models (MODELS)")
+    p.add_argument("--run-name", default=None, help="domyślnie nazwa modelu")
+    p.add_argument("--epochs", type=int, default=50, help="maksymalna liczba epok (early stopping może skończyć wcześniej)")
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--image-size", type=int, default=224)
-    p.add_argument("--lr", type=float, default=1e-3)
+    p.add_argument("--lr", type=float, default=None, help="domyślnie default_lr modelu z rejestru")
     p.add_argument("--weight-decay", type=float, default=1e-4)
-    p.add_argument("--val-ratio", type=float, default=0.2)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--num-workers", type=int, default=0)
-    p.add_argument("--pretrained", action=argparse.BooleanOptionalAction, default=True)
-    return p.parse_args()
+    p.add_argument("--pretrained", action=argparse.BooleanOptionalAction, default=None,
+                   help="domyślnie: wagi ImageNet, jeśli model je ma")
+    p.add_argument("--monitor", choices=list(MONITORS), default="val_loss",
+                   help="metryka walidacyjna wybierająca najlepszą epokę i sterująca early stoppingiem")
+    p.add_argument("--patience", type=int, default=5,
+                   help="early stopping po tylu epokach bez poprawy; 0 = wyłączony")
+    p.add_argument("--min-delta", type=float, default=0.0)
+    p.add_argument("--checkpoint-dir", default=str(ROOT / "outputs" / "checkpoints"),
+                   help="best.pt i last.pt zapisywane w <checkpoint-dir>/<run_id>/")
+    p.add_argument("--log-every-n-steps", type=int, default=10)
+    # transfer learning (modele z .features/.classifier, np. mobilenet_v3_small)
+    p.add_argument("--freeze-features", action="store_true",
+                   help="zamroź ekstraktor cech (.features), trenuj tylko .classifier (feature extraction)")
+    p.add_argument("--unfreeze-last", type=int, default=0,
+                   help="przy --freeze-features odmroź ostatnie N bloków .features (fine-tuning)")
+    p.add_argument("--init-checkpoint", default=None,
+                   help="start z wag checkpointu (np. best.pt wariantu feature extraction) zamiast z ImageNet")
+    p.add_argument("--bn-eval", action="store_true",
+                   help="wszystkie BatchNorm w trybie eval podczas treningu (stałe statystyki); "
+                        "BN zamrożonych warstw jest w eval zawsze")
+    args = p.parse_args()
+
+    spec = get_spec(args.model)
+    if args.pretrained is None:
+        args.pretrained = spec.supports_pretrained
+    if args.lr is None:
+        args.lr = spec.default_lr
+    if args.run_name is None:
+        args.run_name = args.model
+    if args.unfreeze_last and not args.freeze_features:
+        p.error("--unfreeze-last wymaga --freeze-features")
+    return args
+
+
+def training_mode(args) -> str:
+    if not args.freeze_features:
+        return "full" if not args.pretrained else "full_finetune"
+    return "fine_tuning" if args.unfreeze_last else "feature_extraction"
+
+
+def require_cuda() -> torch.device:
+    if not torch.cuda.is_available():
+        raise SystemExit(
+            "CUDA niedostępna, trening uruchamiany jest tylko na GPU. "
+            f"torch={torch.__version__}, torch.version.cuda={torch.version.cuda}. "
+            "Sprawdź sterownik NVIDIA i czy zainstalowany jest torch z indeksu cu128 (uv sync)."
+        )
+    return torch.device("cuda")
+
+
+def load_dataset_info(data_dir: Path) -> dict:
+    path = data_dir / "dataset_info.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def classification_metrics_to_log(metrics: dict, prefix: str) -> dict:
+    keys = ("loss", "accuracy", "f1_macro", "precision_macro", "recall_macro",
+            "f1_weighted", "precision_weighted", "recall_weighted")
+    out = {f"{prefix}_{k}": metrics[k] for k in keys}
+    for name, values in metrics["classification_report"].items():
+        if not isinstance(values, dict) or name in ("macro avg", "weighted avg"):
+            continue
+        for metric_name in ("precision", "recall", "f1-score"):
+            out[f"{prefix}_class_{name}_{metric_name.replace('-', '_')}"] = float(values[metric_name])
+    return out
 
 
 def set_seed(seed: int):
@@ -39,36 +109,47 @@ def set_seed(seed: int):
         torch.cuda.manual_seed_all(seed)
 
 
-def plot_learning_curves(history, out_path: Path):
+def plot_learning_curves(history, out_path: Path, batch_losses=None, steps_per_epoch=None):
     epochs = range(1, len(history.train_loss) + 1)
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+    fig, axes = plt.subplots(1, 3, figsize=(17, 4.5))
 
-    axes[0].plot(epochs, history.train_loss, label="train")
-    axes[0].plot(epochs, history.val_loss, label="val")
+    if batch_losses and steps_per_epoch:
+        # strata pojedynczych batchy na osi epok (batch i w epoce e -> e - 1 + i / steps_per_epoch)
+        x = np.arange(1, len(batch_losses) + 1) / steps_per_epoch
+        axes[0].plot(x, batch_losses, color="tab:blue", alpha=0.25, lw=0.8, label="train (batch)")
+    axes[0].plot(epochs, history.train_loss, "o-", color="tab:blue", label="train (średnia z epoki)")
+    axes[0].plot(epochs, history.val_loss, "o-", color="tab:orange", label="val")
     axes[0].set_title("Loss")
-    axes[0].set_xlabel("epoch")
-    axes[0].set_ylabel("loss")
-    axes[0].legend()
-    axes[0].grid(True, alpha=0.3)
+    axes[0].set_ylabel("loss (skala log)")
+    axes[0].set_yscale("log")
 
-    axes[1].plot(epochs, history.train_acc, label="train")
-    axes[1].plot(epochs, history.val_acc, label="val")
-    axes[1].set_title("Accuracy")
-    axes[1].set_xlabel("epoch")
-    axes[1].set_ylabel("accuracy")
-    axes[1].legend()
-    axes[1].grid(True, alpha=0.3)
+    panels = [
+        (axes[1], "Accuracy", history.train_acc, history.val_acc),
+        (axes[2], "F1 macro", history.train_f1, history.val_f1),
+    ]
+    for ax, title, train_values, val_values in panels:
+        ax.plot(epochs, train_values, "o-", color="tab:blue", label="train")
+        ax.plot(epochs, val_values, "o-", color="tab:orange", label="val")
+        ax.set_title(title)
+        ax.set_ylabel(title.lower())
+
+    for ax in axes:
+        if history.best_epoch:
+            ax.axvline(history.best_epoch, color="tab:green", ls="--", lw=1, label=f"best (epoka {history.best_epoch})")
+        ax.set_xlabel("epoch")
+        ax.grid(True, alpha=0.3)
+        ax.legend(fontsize=8)
 
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
     plt.close(fig)
 
 
-def plot_confusion_matrix(cm, class_names, out_path: Path):
+def plot_confusion_matrix(cm, class_names, out_path: Path, title: str = "Confusion matrix"):
     fig, ax = plt.subplots(figsize=(6, 5))
     disp = ConfusionMatrixDisplay(confusion_matrix=np.array(cm), display_labels=class_names)
     disp.plot(ax=ax, cmap="Blues", colorbar=True, values_format="d")
-    ax.set_title("Confusion matrix")
+    ax.set_title(title)
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
     plt.close(fig)
@@ -76,46 +157,129 @@ def plot_confusion_matrix(cm, class_names, out_path: Path):
 
 def main():
     args = parse_args()
+    device = require_cuda()
     set_seed(args.seed)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
-    train_loader, val_loader, class_names = create_dataloaders(
-        data_dir=args.data_dir,
+    print(f"Using device: {device} ({torch.cuda.get_device_name(0)})")
+
+    data_dir = Path(args.data_dir)
+    dataset_info = load_dataset_info(data_dir)
+    dataset_name = dataset_info.get("name", data_dir.name)
+    spec = get_spec(args.model)
+    # preprocessing zależny od modelu (normalizacja wag pretrenowanych); zapisywany w checkpoincie,
+    # żeby ewaluacja (także na danych zewnętrznych) używała dokładnie tego samego
+    preprocessing = {"image_size": args.image_size, "resize": "square", "mean": list(spec.mean), "std": list(spec.std)}
+    loaders, class_names = create_dataloaders(
+        data_dir=data_dir,
         batch_size=args.batch_size,
         image_size=args.image_size,
-        val_ratio=args.val_ratio,
         seed=args.seed,
         num_workers=args.num_workers,
+        mean=spec.mean,
+        std=spec.std,
     )
-    model = build_model(num_classes=len(class_names), pretrained=args.pretrained)
+    train_loader, val_loader, test_loader = loaders["train"], loaders["val"], loaders["test"]
+    model = build_model(args.model, num_classes=len(class_names), pretrained=args.pretrained)
+    init_info = {}
+    if args.init_checkpoint:
+        init = torch.load(args.init_checkpoint, map_location="cpu", weights_only=False)
+        if init.get("model_name") != args.model or init.get("class_names") != class_names:
+            raise SystemExit(f"--init-checkpoint: model {init.get('model_name')}/{init.get('class_names')} "
+                             f"!= {args.model}/{class_names}")
+        if init.get("preprocessing", preprocessing) != preprocessing:
+            raise SystemExit(f"--init-checkpoint ma inny preprocessing: {init['preprocessing']} != {preprocessing}")
+        model.load_state_dict(init["model_state_dict"])
+        init_info = {"init_checkpoint": Path(args.init_checkpoint).as_posix(),
+                     "init_run_id": Path(args.init_checkpoint).parent.name, "init_epoch": init.get("epoch")}
+    set_trainable(model, args.freeze_features, args.unfreeze_last)
+    n_params = count_parameters(model, trainable_only=False)
+    n_trainable = count_parameters(model)
+    mode = training_mode(args)
+    print(f"model: {args.model} (pretrained={args.pretrained}, {n_params / 1e6:.2f} M parametrów, "
+          f"trenowanych {n_trainable / 1e6:.3f} M, tryb {mode}), lr={args.lr}")
+    patience = args.patience or None
 
     mlflow.set_tracking_uri(args.tracking_uri)
     mlflow.set_experiment(args.experiment)
 
     with mlflow.start_run(run_name=args.run_name):
+        mlflow.set_tags({"dataset": dataset_name, "model": args.model, "training_mode": mode,
+                         "variant": args.run_name})
         mlflow.log_params(
             {
-                "data_dir": args.data_dir,
+                "data_dir": data_dir.as_posix(),
+                "dataset": dataset_name,
+                "dataset_transform": dataset_info.get("transform"),
+                "split_seed": dataset_info.get("seed"),
                 "epochs": args.epochs,
                 "batch_size": args.batch_size,
                 "image_size": args.image_size,
                 "lr": args.lr,
                 "weight_decay": args.weight_decay,
-                "val_ratio": args.val_ratio,
                 "seed": args.seed,
                 "num_classes": len(class_names),
                 "class_names": ",".join(class_names),
-                "model": MODEL_NAME,
+                "model": args.model,
+                "n_params": n_params,
+                "n_params_trainable": n_trainable,
+                "training_mode": mode,
+                "freeze_features": args.freeze_features,
+                "unfreeze_last": args.unfreeze_last,
+                "bn_eval": args.bn_eval,
+                **init_info,
+                "norm_mean": ",".join(f"{v:.3f}" for v in spec.mean),
+                "norm_std": ",".join(f"{v:.3f}" for v in spec.std),
+                "label_map": json.dumps({c: i for i, c in enumerate(class_names)}),
+                "dataset_created": dataset_info.get("created"),
+                "dataset_source": dataset_info.get("source"),
                 "variant": args.run_name,
                 "pretrained": args.pretrained,
                 "optimizer": "AdamW",
-                "device": str(device),
+                "device": torch.cuda.get_device_name(0),
                 "train_size": len(train_loader.dataset),
                 "val_size": len(val_loader.dataset),
+                "test_size": len(test_loader.dataset),
+                "monitor": args.monitor,
+                "patience": patience,
+                "min_delta": args.min_delta,
             }
         )
+        # opis i podział datasetu przy runie
+        for name in ("dataset_info.json", "split.csv"):
+            if (data_dir / name).exists():
+                mlflow.log_artifact(str(data_dir / name), artifact_path="dataset")
+        run_id = mlflow.active_run().info.run_id
+        checkpoint_dir = Path(args.checkpoint_dir) / run_id
+        checkpoint_extra = {
+            "class_names": class_names,
+            "image_size": args.image_size,
+            "model_name": args.model,
+            "variant": args.run_name,
+            "pretrained": args.pretrained,
+            "preprocessing": preprocessing,
+            "training_mode": mode,
+            "dataset": dataset_name,
+            "seed": args.seed,
+        }
 
-        def on_epoch(epoch, train_metrics, val_metrics):
+        step = 0
+        step_losses = []
+        batch_losses = []
+        steps_per_epoch = len(train_loader)
+        live_curves_path = checkpoint_dir / "learning_curves.png"
+
+        def on_batch(loss):
+            nonlocal step
+            step += 1
+            step_losses.append(loss)
+            batch_losses.append(loss)
+            if step % args.log_every_n_steps == 0:
+                mlflow.log_metric("train_loss_step", float(np.mean(step_losses)), step=step)
+                step_losses.clear()
+
+        def on_epoch(epoch, train_metrics, val_metrics, history):
+            # krzywa uczenia odświeżana po każdej epoce: lokalnie i w MLflow (podgląd w trakcie treningu)
+            plot_learning_curves(history, live_curves_path, batch_losses, steps_per_epoch)
+            mlflow.log_artifact(str(live_curves_path))
             mlflow.log_metrics(
                 {
                     "train_loss": train_metrics["loss"],
@@ -134,7 +298,7 @@ def main():
                 },
                 step=epoch,
             )
-            print(
+            tqdm.write(
                 f"epoch {epoch:03d} | "
                 f"train_loss={train_metrics['loss']:.4f} "
                 f"train_acc={train_metrics['accuracy']:.4f} | "
@@ -143,7 +307,7 @@ def main():
                 f"val_f1={val_metrics['f1_macro']:.4f}"
             )
 
-        history, final_metrics, _, _ = train_model(
+        history, val_metrics, _, _ = train_model(
             model=model,
             train_loader=train_loader,
             val_loader=val_loader,
@@ -153,53 +317,54 @@ def main():
             weight_decay=args.weight_decay,
             class_names=class_names,
             on_epoch=on_epoch,
+            on_batch=on_batch,
+            monitor=args.monitor,
+            patience=patience,
+            min_delta=args.min_delta,
+            checkpoint_dir=checkpoint_dir,
+            checkpoint_extra=checkpoint_extra,
+            bn_eval=args.bn_eval,
         )
+        # Test oceniany raz, na wagach z najlepszej epoki (wybranej wyłącznie na val)
+        test_metrics, _, _ = evaluate_model(model, test_loader, device, class_names=class_names)
 
         mlflow.log_metrics(
             {
-                "best_val_accuracy": final_metrics["accuracy"],
-                "best_val_f1_macro": final_metrics["f1_macro"],
-                "best_val_precision_macro": final_metrics["precision_macro"],
-                "best_val_recall_macro": final_metrics["recall_macro"],
-                "best_val_f1_weighted": final_metrics["f1_weighted"],
-                "best_val_precision_weighted": final_metrics["precision_weighted"],
-                "best_val_recall_weighted": final_metrics["recall_weighted"],
+                **classification_metrics_to_log(val_metrics, "best_val"),
+                **classification_metrics_to_log(test_metrics, "test"),
+                "best_epoch": history.best_epoch,
+                "epochs_trained": len(history.train_loss),
             }
         )
-
-        for name, values in final_metrics["classification_report"].items():
-            if not isinstance(values, dict):
-                continue
-            safe = name.replace(" ", "_")
-            for metric_name in ("precision", "recall", "f1-score", "support"):
-                if metric_name in values:
-                    key = f"class_{safe}_{metric_name.replace('-', '_')}"
-                    mlflow.log_metric(key, float(values[metric_name]))
+        mlflow.set_tag("stopped_early", history.stopped_early)
 
         with tempfile.TemporaryDirectory() as tmp:
             tmp_dir = Path(tmp)
             curves_path = tmp_dir / "learning_curves.png"
-            cm_path = tmp_dir / "confusion_matrix.png"
-            report_path = tmp_dir / "classification_report.json"
             metrics_path = tmp_dir / "metrics.json"
             model_path = tmp_dir / "model.pt"
             history_path = tmp_dir / "history.json"
 
-            plot_learning_curves(history, curves_path)
-            plot_confusion_matrix(
-                final_metrics["confusion_matrix"], class_names, cm_path
-            )
+            plot_learning_curves(history, curves_path, batch_losses, steps_per_epoch)
+            for split, metrics in (("val", val_metrics), ("test", test_metrics)):
+                cm_path = tmp_dir / f"confusion_matrix_{split}.png"
+                report_path = tmp_dir / f"classification_report_{split}.json"
+                plot_confusion_matrix(
+                    metrics["confusion_matrix"], class_names, cm_path,
+                    title=f"Confusion matrix {split} (epoka {history.best_epoch})",
+                )
+                report_path.write_text(
+                    json.dumps(metrics["classification_report"], indent=2),
+                    encoding="utf-8",
+                )
+                mlflow.log_artifact(str(cm_path))
+                mlflow.log_artifact(str(report_path))
 
-            report_path.write_text(
-                json.dumps(final_metrics["classification_report"], indent=2),
-                encoding="utf-8",
-            )
             metrics_path.write_text(
                 json.dumps(
                     {
-                        k: v
-                        for k, v in final_metrics.items()
-                        if k != "classification_report"
+                        split: {k: v for k, v in metrics.items() if k != "classification_report"}
+                        for split, metrics in (("val", val_metrics), ("test", test_metrics))
                     },
                     indent=2,
                 ),
@@ -212,6 +377,11 @@ def main():
                         "val_loss": history.val_loss,
                         "train_acc": history.train_acc,
                         "val_acc": history.val_acc,
+                        "train_f1_macro": history.train_f1,
+                        "val_f1_macro": history.val_f1,
+                        "best_epoch": history.best_epoch,
+                        "batch_losses": batch_losses,
+                        "steps_per_epoch": steps_per_epoch,
                     },
                     indent=2,
                 ),
@@ -219,26 +389,22 @@ def main():
             )
             torch.save(
                 {
+                    **checkpoint_extra,
                     "model_state_dict": model.state_dict(),
-                    "class_names": class_names,
-                    "image_size": args.image_size,
-                    "model_name": MODEL_NAME,
-                    "variant": args.run_name,
-                    "pretrained": args.pretrained,
+                    "epoch": history.best_epoch,
                 },
                 model_path,
             )
 
             mlflow.log_artifact(str(curves_path))
-            mlflow.log_artifact(str(cm_path))
-            mlflow.log_artifact(str(report_path))
             mlflow.log_artifact(str(metrics_path))
             mlflow.log_artifact(str(history_path))
             mlflow.log_artifact(str(model_path))
 
-        print(f"run_id={mlflow.active_run().info.run_id}")
-        print(f"val_accuracy={final_metrics['accuracy']:.4f}")
-        print(f"val_f1_macro={final_metrics['f1_macro']:.4f}")
+        print(f"run_id={run_id}")
+        print(f"best_epoch={history.best_epoch} ({args.monitor}), checkpoints={checkpoint_dir}")
+        for split, metrics in (("val", val_metrics), ("test", test_metrics)):
+            print(f"{split}: accuracy={metrics['accuracy']:.4f} f1_macro={metrics['f1_macro']:.4f} loss={metrics['loss']:.4f}")
 
 
 if __name__ == "__main__":
