@@ -85,6 +85,7 @@ def main():
         "resize": "bilinear, do kwadratu image_size x image_size",
         "color_order": "RGB",
         "scale": "piksel / 255",
+        "equalize_luma": preprocessing.get("equalize", False),
         "mean": list(preprocessing["mean"]),
         "std": list(preprocessing["std"]),
         "class_names": ckpt["class_names"],

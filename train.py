@@ -51,6 +51,10 @@ def parse_args():
                    help="przy --freeze-features odmroź ostatnie N bloków .features (fine-tuning)")
     p.add_argument("--init-checkpoint", default=None,
                    help="start z wag checkpointu (np. best.pt wariantu feature extraction) zamiast z ImageNet")
+    p.add_argument("--no-normalize", action="store_true",
+                   help="bez normalizacji mean/std, model dostaje piksele 0-1 (resize zostaje)")
+    p.add_argument("--equalize", action="store_true",
+                   help="wyrównanie histogramu jasności (kanał Y) po resize, na wszystkich splitach")
     p.add_argument("--bn-eval", action="store_true",
                    help="wszystkie BatchNorm w trybie eval podczas treningu (stałe statystyki); "
                         "BN zamrożonych warstw jest w eval zawsze")
@@ -176,15 +180,18 @@ def main():
     dataset_info = load_dataset_info(data_dir)
     dataset_name = dataset_info.get("name", data_dir.name)
     spec = get_spec(args.model)
-    preprocessing = {"image_size": args.image_size, "resize": "square", "mean": list(spec.mean), "std": list(spec.std)}
+    mean, std = ((0.0, 0.0, 0.0), (1.0, 1.0, 1.0)) if args.no_normalize else (spec.mean, spec.std)
+    preprocessing = {"image_size": args.image_size, "resize": "square", "mean": list(mean), "std": list(std),
+                     "equalize": args.equalize}
     loaders, class_names = create_dataloaders(
         data_dir=data_dir,
         batch_size=args.batch_size,
         image_size=args.image_size,
         seed=args.seed,
         num_workers=args.num_workers,
-        mean=spec.mean,
-        std=spec.std,
+        mean=mean,
+        std=std,
+        equalize=args.equalize,
     )
     train_loader, val_loader, test_loader = loaders["train"], loaders["val"], loaders["test"]
     model = build_model(args.model, num_classes=len(class_names), pretrained=args.pretrained)
@@ -194,8 +201,9 @@ def main():
         if init.get("model_name") != args.model or init.get("class_names") != class_names:
             raise SystemExit(f"--init-checkpoint: model {init.get('model_name')}/{init.get('class_names')} "
                              f"!= {args.model}/{class_names}")
-        if init.get("preprocessing", preprocessing) != preprocessing:
-            raise SystemExit(f"--init-checkpoint ma inny preprocessing: {init['preprocessing']} != {preprocessing}")
+        init_prep = {"equalize": False, **init.get("preprocessing", preprocessing)}
+        if init_prep != preprocessing:
+            raise SystemExit(f"--init-checkpoint ma inny preprocessing: {init_prep} != {preprocessing}")
         model.load_state_dict(init["model_state_dict"])
         init_info = {"init_checkpoint": Path(args.init_checkpoint).as_posix(),
                      "init_run_id": Path(args.init_checkpoint).parent.name, "init_epoch": init.get("epoch")}
@@ -235,8 +243,9 @@ def main():
                 "unfreeze_last": args.unfreeze_last,
                 "bn_eval": args.bn_eval,
                 **init_info,
-                "norm_mean": ",".join(f"{v:.3f}" for v in spec.mean),
-                "norm_std": ",".join(f"{v:.3f}" for v in spec.std),
+                "normalize": not args.no_normalize,
+                "norm_mean": ",".join(f"{v:.3f}" for v in mean),
+                "norm_std": ",".join(f"{v:.3f}" for v in std),
                 "label_map": json.dumps({c: i for i, c in enumerate(class_names)}),
                 "dataset_created": dataset_info.get("created"),
                 "dataset_source": dataset_info.get("source"),
@@ -251,7 +260,7 @@ def main():
                 "patience": patience,
                 "min_delta": args.min_delta,
                 "augmentation": dataset_info.get("transform") or "none",
-                "histogram_equalization": False,
+                "histogram_equalization": args.equalize,
             }
         )
         for name in ("dataset_info.json", "split.csv"):

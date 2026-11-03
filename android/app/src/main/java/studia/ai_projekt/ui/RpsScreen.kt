@@ -1,12 +1,14 @@
 package studia.ai_projekt.ui
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -23,22 +25,27 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.ContentCut
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Landscape
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -80,6 +87,9 @@ fun RpsScreen() {
     var prediction by remember { mutableStateOf<ClassificationResult?>(null) }
     val smoother = remember { PredictionSmoother() }
     val mainHandler = remember { Handler(Looper.getMainLooper()) }
+    val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
+    var threshold by remember { mutableFloatStateOf(prefs.getFloat(KEY_THRESHOLD, DEFAULT_THRESHOLD)) }
+    var showSettings by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (hasPermission) {
@@ -108,8 +118,82 @@ fun RpsScreen() {
                 ResultCard(
                     result = prediction,
                     classNames = classifier.classNames,
+                    threshold = threshold,
                 )
             }
+        }
+
+        if (hasPermission) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .statusBarsPadding()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                FilledTonalIconButton(onClick = { showSettings = !showSettings }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = stringResource(R.string.settings),
+                    )
+                }
+                AnimatedVisibility(visible = showSettings) {
+                    ThresholdPanel(
+                        threshold = threshold,
+                        onChange = { threshold = it },
+                        onChangeFinished = { prefs.edit().putFloat(KEY_THRESHOLD, threshold).apply() },
+                    )
+                }
+            }
+        }
+    }
+}
+
+private const val KEY_THRESHOLD = "confidence_threshold"
+private const val DEFAULT_THRESHOLD = 0.6f
+private const val MIN_THRESHOLD = 0.34f
+private const val MAX_THRESHOLD = 0.99f
+
+@Composable
+private fun ThresholdPanel(
+    threshold: Float,
+    onChange: (Float) -> Unit,
+    onChangeFinished: () -> Unit,
+) {
+    Card(
+        modifier = Modifier.width(260.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.96f),
+        ),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = stringResource(R.string.threshold_label),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Text(
+                    text = "${(threshold * 100f).toInt()}%",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Slider(
+                value = threshold,
+                onValueChange = onChange,
+                onValueChangeFinished = onChangeFinished,
+                valueRange = MIN_THRESHOLD..MAX_THRESHOLD,
+            )
+            Text(
+                text = stringResource(R.string.threshold_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            )
         }
     }
 }
@@ -154,7 +238,14 @@ private fun PermissionPane(onRequest: () -> Unit) {
 private fun ResultCard(
     result: ClassificationResult?,
     classNames: List<String>,
+    threshold: Float,
 ) {
+    val confident = result != null && result.confidence >= threshold
+    val title = when {
+        result == null -> stringResource(R.string.prediction_idle)
+        confident -> result.label
+        else -> stringResource(R.string.prediction_unsure)
+    }
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(28.dp),
@@ -170,7 +261,7 @@ private fun ResultCard(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             AnimatedContent(
-                targetState = result?.label ?: stringResource(R.string.prediction_idle),
+                targetState = title,
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
                 label = "prediction",
             ) { label ->
@@ -191,7 +282,8 @@ private fun ResultCard(
                         )
                         if (result != null) {
                             Text(
-                                text = "${(result.confidence * 100f).toInt()}% ${stringResource(R.string.confidence_label).lowercase()}",
+                                text = "${(result.confidence * 100f).toInt()}% ${stringResource(R.string.confidence_label).lowercase()}" +
+                                    " (${stringResource(R.string.threshold_label).lowercase()} ${(threshold * 100f).toInt()}%)",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                             )
