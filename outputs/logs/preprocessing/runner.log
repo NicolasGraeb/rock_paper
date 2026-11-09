@@ -1,0 +1,20 @@
+[18:05:13] pominięte (już są w MLflow): [], do zrobienia: ['none', 'clahe', 'gamma', 'grayscale', 'roi_center', 'blur', 'white_balance', 'sharpen', 'canny'], po 3 naraz
+[18:05:13] start none
+[18:05:13] start gamma
+[18:05:13] start clahe
+[18:13:12] koniec gamma: kod 0, 8.0 min, log C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\logs\preprocessing\prep_gamma.log
+[18:13:12] start grayscale
+[18:18:05] koniec none: kod 0, 12.9 min, log C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\logs\preprocessing\prep_none.log
+[18:18:05] start roi_center
+[18:18:20] koniec clahe: kod 0, 13.1 min, log C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\logs\preprocessing\prep_clahe.log
+[18:18:20] start blur
+[18:23:28] koniec grayscale: kod 0, 10.3 min, log C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\logs\preprocessing\prep_grayscale.log
+[18:23:28] start white_balance
+[18:27:30] koniec roi_center: kod 0, 9.4 min, log C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\logs\preprocessing\prep_roi_center.log
+[18:27:30] start sharpen
+[18:28:47] koniec blur: kod 0, 10.4 min, log C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\logs\preprocessing\prep_blur.log
+[18:28:47] start canny
+[18:38:15] koniec canny: kod 0, 9.5 min, log C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\logs\preprocessing\prep_canny.log
+[18:40:19] koniec white_balance: kod 0, 16.8 min, log C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\logs\preprocessing\prep_white_balance.log
+[18:40:30] koniec sharpen: kod 0, 13.0 min, log C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\logs\preprocessing\prep_sharpen.log
+[18:40:30] podsumowanie: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\comparison_preprocessing.md

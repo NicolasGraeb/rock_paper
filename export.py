@@ -86,6 +86,7 @@ def main():
         "color_order": "RGB",
         "scale": "piksel / 255",
         "equalize_luma": preprocessing.get("equalize", False),
+        "filter": preprocessing.get("filter", "none"),
         "mean": list(preprocessing["mean"]),
         "std": list(preprocessing["std"]),
         "class_names": ckpt["class_names"],

@@ -18,6 +18,7 @@ def create_dataloaders(
     mean=IMAGENET_MEAN,
     std=IMAGENET_STD,
     equalize: bool = False,
+    image_filter: str = "none",
 ):
     data_dir = Path(data_dir)
     missing = [s for s in SPLITS if not (data_dir / s).is_dir()]
@@ -26,7 +27,8 @@ def create_dataloaders(
             f"Brak katalogów {missing} w {data_dir}, najpierw uruchom load_dataset.py"
         )
 
-    tf = build_transforms(image_size=image_size, mean=mean, std=std, equalize=equalize)
+    tf = build_transforms(image_size=image_size, mean=mean, std=std, equalize=equalize,
+                          image_filter=image_filter)
     splits = {
         s: datasets.ImageFolder(root=str(data_dir / s), transform=tf)
         for s in SPLITS
@@ -63,7 +65,8 @@ def create_eval_loader(
     if not root.is_dir():
         raise FileNotFoundError(f"Brak katalogu {root}")
     tf = build_transforms(preprocessing["image_size"], mean=preprocessing["mean"], std=preprocessing["std"],
-                          equalize=preprocessing.get("equalize", False))
+                          equalize=preprocessing.get("equalize", False),
+                          image_filter=preprocessing.get("filter", "none"))
     ds = datasets.ImageFolder(root=str(root), transform=tf)
     if ds.classes != list(class_names):
         raise ValueError(f"Klasy w {root} ({ds.classes}) różnią się od klas modelu ({class_names})")

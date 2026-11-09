@@ -14,6 +14,7 @@ from tqdm.auto import tqdm
 from src.data import create_dataloaders
 from src.engine import MONITORS, evaluate_model, train_model
 from src.models import MODELS, build_model, count_parameters, get_spec, set_trainable
+from src.transforms import FILTERS
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_TRACKING_URI = f"sqlite:///{(ROOT / 'mlflow.db').as_posix()}"
@@ -55,6 +56,8 @@ def parse_args():
                    help="bez normalizacji mean/std, model dostaje piksele 0-1 (resize zostaje)")
     p.add_argument("--equalize", action="store_true",
                    help="wyrównanie histogramu jasności (kanał Y) po resize, na wszystkich splitach")
+    p.add_argument("--filter", choices=list(FILTERS), default="none",
+                   help="przetwarzanie obrazu na wszystkich splitach (src/transforms.py FILTERS)")
     p.add_argument("--bn-eval", action="store_true",
                    help="wszystkie BatchNorm w trybie eval podczas treningu (stałe statystyki); "
                         "BN zamrożonych warstw jest w eval zawsze")
@@ -67,6 +70,8 @@ def parse_args():
         args.lr = spec.default_lr
     if args.run_name is None:
         args.run_name = args.model
+    if args.equalize and args.filter != "none":
+        p.error("--equalize razem z --filter, użyj --filter histeq")
     if args.unfreeze_last and not args.freeze_features:
         p.error("--unfreeze-last wymaga --freeze-features")
     return args
@@ -182,7 +187,7 @@ def main():
     spec = get_spec(args.model)
     mean, std = ((0.0, 0.0, 0.0), (1.0, 1.0, 1.0)) if args.no_normalize else (spec.mean, spec.std)
     preprocessing = {"image_size": args.image_size, "resize": "square", "mean": list(mean), "std": list(std),
-                     "equalize": args.equalize}
+                     "equalize": args.equalize, "filter": args.filter}
     loaders, class_names = create_dataloaders(
         data_dir=data_dir,
         batch_size=args.batch_size,
@@ -192,6 +197,7 @@ def main():
         mean=mean,
         std=std,
         equalize=args.equalize,
+        image_filter=args.filter,
     )
     train_loader, val_loader, test_loader = loaders["train"], loaders["val"], loaders["test"]
     model = build_model(args.model, num_classes=len(class_names), pretrained=args.pretrained)
@@ -201,7 +207,7 @@ def main():
         if init.get("model_name") != args.model or init.get("class_names") != class_names:
             raise SystemExit(f"--init-checkpoint: model {init.get('model_name')}/{init.get('class_names')} "
                              f"!= {args.model}/{class_names}")
-        init_prep = {"equalize": False, **init.get("preprocessing", preprocessing)}
+        init_prep = {"equalize": False, "filter": "none", **init.get("preprocessing", preprocessing)}
         if init_prep != preprocessing:
             raise SystemExit(f"--init-checkpoint ma inny preprocessing: {init_prep} != {preprocessing}")
         model.load_state_dict(init["model_state_dict"])
@@ -220,7 +226,7 @@ def main():
 
     with mlflow.start_run(run_name=args.run_name):
         mlflow.set_tags({"dataset": dataset_name, "model": args.model, "training_mode": mode,
-                         "variant": args.run_name})
+                         "variant": args.run_name, "image_filter": args.filter})
         mlflow.log_params(
             {
                 "data_dir": data_dir.as_posix(),
@@ -261,6 +267,8 @@ def main():
                 "min_delta": args.min_delta,
                 "augmentation": dataset_info.get("transform") or "none",
                 "histogram_equalization": args.equalize,
+                "image_filter": args.filter,
+                "num_workers": args.num_workers,
             }
         )
         for name in ("dataset_info.json", "split.csv"):
