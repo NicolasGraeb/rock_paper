@@ -31,3 +31,5 @@ CLAUDE.md
 *.ckpt
 #zdjęcia do testu na telefonie, robi je export.py
 android/app/src/androidTest/assets/parity/
+#apka i model do oddania
+aplikacja_mobilna/
