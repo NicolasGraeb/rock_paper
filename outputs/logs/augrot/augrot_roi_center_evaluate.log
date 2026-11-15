@@ -1,0 +1,10 @@
+🏃 View run augrot_roi_center at: http://127.0.0.1:5000/#/experiments/13/runs/5076f9a80d894fa7bcc9095034e42ef4
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.9945578231292517,
+  "precision_macro": 0.9945688371787681,
+  "recall_macro": 0.9945578231292517,
+  "f1_macro": 0.9945597115395334,
+  "loss": 0.022686288111742593
+}
+błędów: 16/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\5076f9a80d894fa7bcc9095034e42ef4\eval | run MLflow: 5076f9a80d894fa7bcc9095034e42ef4

@@ -1,0 +1,50 @@
+16 modeli: ['baseline_mobilenet_v3_small', 'mobilenet_v3_small_aug_offline', 'baseline_bez_preprocessingu', 'aug_offline_bez_preprocessingu', 'baseline_histeq', 'aug_offline_histeq', 'finetune_aug_offline_last4', 'prep_gamma', 'prep_none', 'prep_clahe', 'prep_grayscale', 'prep_roi_center', 'prep_blur', 'prep_white_balance', 'prep_sharpen', 'prep_canny']
+🏃 View run baseline_mobilenet_v3_small at: http://127.0.0.1:5000/#/experiments/10/runs/43c5a6ffd2ab4fe2ae6786f1f71b20ab
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[1/16] baseline_mobilenet_v3_small: acc 0.9081, f1 0.9070, błędów 201 (HaGRID test 0.9946)
+🏃 View run mobilenet_v3_small_aug_offline at: http://127.0.0.1:5000/#/experiments/10/runs/c7089c454aa54dcc9c8c0c480c09cbb1
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[2/16] mobilenet_v3_small_aug_offline: acc 0.9054, f1 0.9030, błędów 207 (HaGRID test 0.9963)
+🏃 View run baseline_bez_preprocessingu at: http://127.0.0.1:5000/#/experiments/10/runs/1acd96145c8e4c5f857fb9340d4d2d89
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[3/16] baseline_bez_preprocessingu: acc 0.7888, f1 0.7851, błędów 462 (HaGRID test 0.9956)
+🏃 View run aug_offline_bez_preprocessingu at: http://127.0.0.1:5000/#/experiments/10/runs/95bb6cd3b7194e25865d654810e8d92c
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[4/16] aug_offline_bez_preprocessingu: acc 0.8807, f1 0.8736, błędów 261 (HaGRID test 0.9952)
+🏃 View run baseline_histeq at: http://127.0.0.1:5000/#/experiments/10/runs/a33f5a83cf3c4f1aac1f89e6a86a9426
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[5/16] baseline_histeq: acc 0.7701, f1 0.7459, błędów 503 (HaGRID test 0.9912)
+🏃 View run aug_offline_histeq at: http://127.0.0.1:5000/#/experiments/10/runs/cca9f712898f404ea816c6ff10140eb8
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[6/16] aug_offline_histeq: acc 0.9456, f1 0.9444, błędów 119 (HaGRID test 0.9952)
+🏃 View run finetune_aug_offline_last4 at: http://127.0.0.1:5000/#/experiments/10/runs/b02456e2b7a24cc8a74cf29417dba821
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[7/16] finetune_aug_offline_last4: acc 0.8537, f1 0.8465, błędów 320 (HaGRID test 0.9969)
+🏃 View run prep_gamma at: http://127.0.0.1:5000/#/experiments/10/runs/d4021be33dc64252bc6083866462608f
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[8/16] prep_gamma: acc 0.8780, f1 0.8774, błędów 267 (HaGRID test 0.9946)
+🏃 View run prep_none at: http://127.0.0.1:5000/#/experiments/10/runs/e9953e16bf6d4e8ca9bd9e4213d46175
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[9/16] prep_none: acc 0.7742, f1 0.7460, błędów 494 (HaGRID test 0.9956)
+🏃 View run prep_clahe at: http://127.0.0.1:5000/#/experiments/10/runs/74e12371dca94a989eae6bc3d071206f
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[10/16] prep_clahe: acc 0.7431, f1 0.6892, błędów 562 (HaGRID test 0.9942)
+🏃 View run prep_grayscale at: http://127.0.0.1:5000/#/experiments/10/runs/6b52544cf12148ceb84d4d1913da3335
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[11/16] prep_grayscale: acc 0.8835, f1 0.8835, błędów 255 (HaGRID test 0.9918)
+🏃 View run prep_roi_center at: http://127.0.0.1:5000/#/experiments/10/runs/01e683c441bd44d5a58af43cb3e3e74a
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[12/16] prep_roi_center: acc 0.8483, f1 0.8440, błędów 332 (HaGRID test 0.9946)
+🏃 View run prep_blur at: http://127.0.0.1:5000/#/experiments/10/runs/30cc0f01cd49496eb8d9ef9642ee9179
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[13/16] prep_blur: acc 0.8789, f1 0.8808, błędów 265 (HaGRID test 0.9949)
+🏃 View run prep_white_balance at: http://127.0.0.1:5000/#/experiments/10/runs/4d9a863ec0184ccdb432357dc0002b3b
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[14/16] prep_white_balance: acc 0.7701, f1 0.7379, błędów 503 (HaGRID test 0.9939)
+🏃 View run prep_sharpen at: http://127.0.0.1:5000/#/experiments/10/runs/86eeaee13dcb4512a2e2743c09c02bcf
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[15/16] prep_sharpen: acc 0.7651, f1 0.7467, błędów 514 (HaGRID test 0.9959)
+🏃 View run prep_canny at: http://127.0.0.1:5000/#/experiments/10/runs/151f5ca1f3cb437091780f0aa094ffb3
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/10
+[16/16] prep_canny: acc 0.8076, f1 0.8032, błędów 421 (HaGRID test 0.9500)
+zapisano outputs\old_dataset_rot90_test\metrics_old_dataset.csv

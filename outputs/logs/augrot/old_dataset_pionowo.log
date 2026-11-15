@@ -1,0 +1,44 @@
+13 modeli: ['augrot_baseline', 'augrot_bez_normalizacji', 'augrot_histeq', 'augrot_clahe', 'augrot_gamma', 'augrot_grayscale', 'augrot_roi_center', 'augrot_blur', 'augrot_white_balance', 'augrot_sharpen', 'augrot_canny', 'augrot_feature_extraction', 'augrot_finetune_last4']
+2026/11/11 02:05:50 INFO mlflow.tracking.fluent: Experiment with name 'papier-kamien-augrot-old-dataset-rot90-test' does not exist. Creating a new experiment.
+[codecarbon INFO @ 02:05:50] offline tracker init
+[codecarbon WARNING @ 02:05:50] Multiple instances of codecarbon are allowed to run at the same time.
+🏃 View run augrot_baseline at: http://127.0.0.1:5000/#/experiments/15/runs/da34176884c648d3850b06a4324c3e04
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[1/13] augrot_baseline: acc 0.8135, f1 0.7984, błędów 408 (HaGRID test 0.9935)
+🏃 View run augrot_bez_normalizacji at: http://127.0.0.1:5000/#/experiments/15/runs/7d9747e4c4e54828b76be36be87088b4
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[2/13] augrot_bez_normalizacji: acc 0.9388, f1 0.9394, błędów 134 (HaGRID test 0.9939)
+🏃 View run augrot_histeq at: http://127.0.0.1:5000/#/experiments/15/runs/7566493f074141a6b2c4da501136c3b3
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[3/13] augrot_histeq: acc 0.9726, f1 0.9721, błędów 60 (HaGRID test 0.9888)
+🏃 View run augrot_clahe at: http://127.0.0.1:5000/#/experiments/15/runs/9eec202fcc114554973943afd994c303
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[4/13] augrot_clahe: acc 0.7230, f1 0.6730, błędów 606 (HaGRID test 0.9939)
+🏃 View run augrot_gamma at: http://127.0.0.1:5000/#/experiments/15/runs/2d97178221e945f5a7ea74cc184de81f
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[5/13] augrot_gamma: acc 0.8094, f1 0.7945, błędów 417 (HaGRID test 0.9932)
+🏃 View run augrot_grayscale at: http://127.0.0.1:5000/#/experiments/15/runs/a0a3dedf3d364d60855129476ba08e3c
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[6/13] augrot_grayscale: acc 0.9113, f1 0.9120, błędów 194 (HaGRID test 0.9861)
+🏃 View run augrot_roi_center at: http://127.0.0.1:5000/#/experiments/15/runs/9d6ba98b79bc410597b641d1755a3c4f
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[7/13] augrot_roi_center: acc 0.9282, f1 0.9280, błędów 157 (HaGRID test 0.9946)
+🏃 View run augrot_blur at: http://127.0.0.1:5000/#/experiments/15/runs/5b5fd297e6ad4213bd33220273b5cde8
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[8/13] augrot_blur: acc 0.8272, f1 0.8134, błędów 378 (HaGRID test 0.9939)
+🏃 View run augrot_white_balance at: http://127.0.0.1:5000/#/experiments/15/runs/a97c06fb953b4cbaa87900f4afdf6f2d
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[9/13] augrot_white_balance: acc 0.9027, f1 0.9024, błędów 213 (HaGRID test 0.9925)
+🏃 View run augrot_sharpen at: http://127.0.0.1:5000/#/experiments/15/runs/84f7a596c060492e97d4c6d1bc9e42c7
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[10/13] augrot_sharpen: acc 0.6974, f1 0.6791, błędów 662 (HaGRID test 0.9932)
+🏃 View run augrot_canny at: http://127.0.0.1:5000/#/experiments/15/runs/12b2c1661e4c4b86aa0272b86d82657f
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[11/13] augrot_canny: acc 0.7431, f1 0.7356, błędów 562 (HaGRID test 0.9367)
+🏃 View run augrot_feature_extraction at: http://127.0.0.1:5000/#/experiments/15/runs/699de3097bf845a9818925e78259514a
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[12/13] augrot_feature_extraction: acc 0.6293, f1 0.6158, błędów 811 (HaGRID test 0.9221)
+🏃 View run augrot_finetune_last4 at: http://127.0.0.1:5000/#/experiments/15/runs/e7732cb903db41bfbce21d9bc72e9382
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/15
+[13/13] augrot_finetune_last4: acc 0.8889, f1 0.8853, błędów 243 (HaGRID test 0.9949)
+zapisano C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\augrot\old_dataset_pionowo\metrics_old_dataset.csv

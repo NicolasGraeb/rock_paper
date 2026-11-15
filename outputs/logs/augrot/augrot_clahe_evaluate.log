@@ -1,0 +1,10 @@
+🏃 View run augrot_clahe at: http://127.0.0.1:5000/#/experiments/13/runs/66fcedbd4595461190e8a39d30c95728
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.9938775510204082,
+  "precision_macro": 0.9938827221992729,
+  "recall_macro": 0.9938775510204082,
+  "f1_macro": 0.9938789313696086,
+  "loss": 0.02148450709815938
+}
+błędów: 18/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\66fcedbd4595461190e8a39d30c95728\eval | run MLflow: 66fcedbd4595461190e8a39d30c95728

@@ -1,0 +1,10 @@
+🏃 View run augrot_white_balance at: http://127.0.0.1:5000/#/experiments/13/runs/ca0ee6c5b74141c991baa3dd0810cc08
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.992517006802721,
+  "precision_macro": 0.9925221461953319,
+  "recall_macro": 0.992517006802721,
+  "f1_macro": 0.9925173387530011,
+  "loss": 0.01806346746244734
+}
+błędów: 22/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\ca0ee6c5b74141c991baa3dd0810cc08\eval | run MLflow: ca0ee6c5b74141c991baa3dd0810cc08

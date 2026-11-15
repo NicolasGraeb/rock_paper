@@ -1,0 +1,10 @@
+🏃 View run augrot_canny at: http://127.0.0.1:5000/#/experiments/13/runs/f7a26f15a62743b0af642d8144849d9a
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.936734693877551,
+  "precision_macro": 0.9368409767250716,
+  "recall_macro": 0.936734693877551,
+  "f1_macro": 0.9367578539762601,
+  "loss": 0.16567305298078627
+}
+błędów: 186/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\f7a26f15a62743b0af642d8144849d9a\eval | run MLflow: f7a26f15a62743b0af642d8144849d9a

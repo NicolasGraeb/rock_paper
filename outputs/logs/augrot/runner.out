@@ -1,0 +1,100 @@
+[2026-11-11 00:08:16] start
+[2026-11-11 00:08:16] buduję zbiór z pełnymi obrotami i odbiciami
+[2026-11-11 00:12:36] augment_dataset: kod 0, 4.3 min
+[2026-11-11 00:12:36] [1/13] augrot_baseline
+[2026-11-11 00:12:36] augrot_baseline: trening
+[2026-11-11 00:18:36] augrot_baseline_train: kod 0, 6.0 min
+[2026-11-11 00:18:52] augrot_baseline_evaluate: kod 0, 0.3 min
+[2026-11-11 00:19:08] augrot_baseline_xai: kod 0, 0.3 min
+[2026-11-11 00:19:51] augrot_baseline_green: kod 0, 0.7 min
+[2026-11-11 00:19:51] augrot_baseline: HaGRID test acc 0.9935, f1 0.9935
+[2026-11-11 00:19:51] [2/13] augrot_bez_normalizacji
+[2026-11-11 00:19:51] augrot_bez_normalizacji: trening
+[2026-11-11 00:26:46] augrot_bez_normalizacji_train: kod 0, 6.9 min
+[2026-11-11 00:26:59] augrot_bez_normalizacji_evaluate: kod 0, 0.2 min
+[2026-11-11 00:27:14] augrot_bez_normalizacji_xai: kod 0, 0.3 min
+[2026-11-11 00:27:58] augrot_bez_normalizacji_green: kod 0, 0.7 min
+[2026-11-11 00:27:58] augrot_bez_normalizacji: HaGRID test acc 0.9939, f1 0.9939
+[2026-11-11 00:27:58] [3/13] augrot_histeq
+[2026-11-11 00:27:58] augrot_histeq: trening
+[2026-11-11 00:34:30] augrot_histeq_train: kod 0, 6.5 min
+[2026-11-11 00:34:44] augrot_histeq_evaluate: kod 0, 0.2 min
+[2026-11-11 00:35:00] augrot_histeq_xai: kod 0, 0.3 min
+[2026-11-11 00:35:44] augrot_histeq_green: kod 0, 0.7 min
+[2026-11-11 00:35:44] augrot_histeq: HaGRID test acc 0.9888, f1 0.9888
+[2026-11-11 00:35:44] [4/13] augrot_clahe
+[2026-11-11 00:35:44] augrot_clahe: trening
+[2026-11-11 00:45:38] augrot_clahe_train: kod 0, 9.9 min
+[2026-11-11 00:45:52] augrot_clahe_evaluate: kod 0, 0.2 min
+[2026-11-11 00:46:09] augrot_clahe_xai: kod 0, 0.3 min
+[2026-11-11 00:46:52] augrot_clahe_green: kod 0, 0.7 min
+[2026-11-11 00:46:52] augrot_clahe: HaGRID test acc 0.9939, f1 0.9939
+[2026-11-11 00:46:52] [5/13] augrot_gamma
+[2026-11-11 00:46:52] augrot_gamma: trening
+[2026-11-11 00:54:06] augrot_gamma_train: kod 0, 7.2 min
+[2026-11-11 00:54:20] augrot_gamma_evaluate: kod 0, 0.2 min
+[2026-11-11 00:54:36] augrot_gamma_xai: kod 0, 0.3 min
+[2026-11-11 00:55:19] augrot_gamma_green: kod 0, 0.7 min
+[2026-11-11 00:55:19] augrot_gamma: HaGRID test acc 0.9932, f1 0.9932
+[2026-11-11 00:55:19] [6/13] augrot_grayscale
+[2026-11-11 00:55:19] augrot_grayscale: trening
+[2026-11-11 01:01:59] augrot_grayscale_train: kod 0, 6.7 min
+[2026-11-11 01:02:12] augrot_grayscale_evaluate: kod 0, 0.2 min
+[2026-11-11 01:02:28] augrot_grayscale_xai: kod 0, 0.3 min
+[2026-11-11 01:03:12] augrot_grayscale_green: kod 0, 0.7 min
+[2026-11-11 01:03:12] augrot_grayscale: HaGRID test acc 0.9861, f1 0.9861
+[2026-11-11 01:03:12] [7/13] augrot_roi_center
+[2026-11-11 01:03:12] augrot_roi_center: trening
+[2026-11-11 01:10:11] augrot_roi_center_train: kod 0, 7.0 min
+[2026-11-11 01:10:25] augrot_roi_center_evaluate: kod 0, 0.2 min
+[2026-11-11 01:10:42] augrot_roi_center_xai: kod 0, 0.3 min
+[2026-11-11 01:11:26] augrot_roi_center_green: kod 0, 0.7 min
+[2026-11-11 01:11:26] augrot_roi_center: HaGRID test acc 0.9946, f1 0.9946
+[2026-11-11 01:11:26] [8/13] augrot_blur
+[2026-11-11 01:11:26] augrot_blur: trening
+[2026-11-11 01:21:12] augrot_blur_train: kod 0, 9.8 min
+[2026-11-11 01:21:26] augrot_blur_evaluate: kod 0, 0.2 min
+[2026-11-11 01:21:43] augrot_blur_xai: kod 0, 0.3 min
+[2026-11-11 01:22:27] augrot_blur_green: kod 0, 0.7 min
+[2026-11-11 01:22:27] augrot_blur: HaGRID test acc 0.9939, f1 0.9939
+[2026-11-11 01:22:27] [9/13] augrot_white_balance
+[2026-11-11 01:22:27] augrot_white_balance: trening
+[2026-11-11 01:30:16] augrot_white_balance_train: kod 0, 7.8 min
+[2026-11-11 01:30:34] augrot_white_balance_evaluate: kod 0, 0.3 min
+[2026-11-11 01:30:54] augrot_white_balance_xai: kod 0, 0.3 min
+[2026-11-11 01:31:37] augrot_white_balance_green: kod 0, 0.7 min
+[2026-11-11 01:31:37] augrot_white_balance: HaGRID test acc 0.9925, f1 0.9925
+[2026-11-11 01:31:37] [10/13] augrot_sharpen
+[2026-11-11 01:31:37] augrot_sharpen: trening
+[2026-11-11 01:38:59] augrot_sharpen_train: kod 0, 7.4 min
+[2026-11-11 01:39:13] augrot_sharpen_evaluate: kod 0, 0.2 min
+[2026-11-11 01:39:29] augrot_sharpen_xai: kod 0, 0.3 min
+[2026-11-11 01:40:12] augrot_sharpen_green: kod 0, 0.7 min
+[2026-11-11 01:40:12] augrot_sharpen: HaGRID test acc 0.9932, f1 0.9932
+[2026-11-11 01:40:12] [11/13] augrot_canny
+[2026-11-11 01:40:12] augrot_canny: trening
+[2026-11-11 01:47:48] augrot_canny_train: kod 0, 7.6 min
+[2026-11-11 01:48:02] augrot_canny_evaluate: kod 0, 0.2 min
+[2026-11-11 01:48:19] augrot_canny_xai: kod 0, 0.3 min
+[2026-11-11 01:49:02] augrot_canny_green: kod 0, 0.7 min
+[2026-11-11 01:49:02] augrot_canny: HaGRID test acc 0.9367, f1 0.9368
+[2026-11-11 01:49:02] [12/13] augrot_feature_extraction
+[2026-11-11 01:49:02] augrot_feature_extraction: trening
+[2026-11-11 01:56:09] augrot_feature_extraction_train: kod 0, 7.1 min
+[2026-11-11 01:56:22] augrot_feature_extraction_evaluate: kod 0, 0.2 min
+[2026-11-11 01:56:38] augrot_feature_extraction_xai: kod 0, 0.3 min
+[2026-11-11 01:57:21] augrot_feature_extraction_green: kod 0, 0.7 min
+[2026-11-11 01:57:21] augrot_feature_extraction: HaGRID test acc 0.9221, f1 0.9223
+[2026-11-11 01:57:21] [13/13] augrot_finetune_last4
+[2026-11-11 01:57:21] augrot_finetune_last4: trening
+[2026-11-11 02:02:45] augrot_finetune_last4_train: kod 0, 5.4 min
+[2026-11-11 02:02:58] augrot_finetune_last4_evaluate: kod 0, 0.2 min
+[2026-11-11 02:03:14] augrot_finetune_last4_xai: kod 0, 0.3 min
+[2026-11-11 02:03:58] augrot_finetune_last4_green: kod 0, 0.7 min
+[2026-11-11 02:03:58] augrot_finetune_last4: HaGRID test acc 0.9949, f1 0.9949
+[2026-11-11 02:03:58] test na starym zbiorze (poziomo)
+[2026-11-11 02:05:46] old_dataset_poziomo: kod 0, 1.8 min
+[2026-11-11 02:05:46] test na starym zbiorze (pionowo)
+[2026-11-11 02:07:44] old_dataset_pionowo: kod 0, 2.0 min
+[2026-11-11 02:07:44] podsumowanie: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\augrot\comparison_all.csv, C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\augrot\comparison_all.md
+[2026-11-11 02:07:44] koniec, nieudane: brak

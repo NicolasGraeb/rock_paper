@@ -1,0 +1,10 @@
+🏃 View run augrot_feature_extraction at: http://127.0.0.1:5000/#/experiments/13/runs/0655cf1ad0304e508c190d7f5c88e86f
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.922108843537415,
+  "precision_macro": 0.9226603100561753,
+  "recall_macro": 0.9221088435374151,
+  "f1_macro": 0.9222651824603921,
+  "loss": 0.20386739348878666
+}
+błędów: 229/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\0655cf1ad0304e508c190d7f5c88e86f\eval | run MLflow: 0655cf1ad0304e508c190d7f5c88e86f

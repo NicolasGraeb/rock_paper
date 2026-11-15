@@ -1,0 +1,10 @@
+🏃 View run augrot_gamma at: http://127.0.0.1:5000/#/experiments/13/runs/6b2def0892014f6fb3b4c59c241918ff
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.9931972789115646,
+  "precision_macro": 0.9932035001025987,
+  "recall_macro": 0.9931972789115647,
+  "f1_macro": 0.9931991804876091,
+  "loss": 0.017709256132781903
+}
+błędów: 20/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\6b2def0892014f6fb3b4c59c241918ff\eval | run MLflow: 6b2def0892014f6fb3b4c59c241918ff

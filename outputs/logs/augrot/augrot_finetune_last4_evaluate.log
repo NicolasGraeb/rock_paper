@@ -1,0 +1,10 @@
+🏃 View run augrot_finetune_last4 at: http://127.0.0.1:5000/#/experiments/13/runs/3a2cd4d87f104be28e0f7ec62e078f5c
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.9948979591836735,
+  "precision_macro": 0.9948969140539966,
+  "recall_macro": 0.9948979591836734,
+  "f1_macro": 0.9948972640543371,
+  "loss": 0.01681216681054007
+}
+błędów: 15/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\3a2cd4d87f104be28e0f7ec62e078f5c\eval | run MLflow: 3a2cd4d87f104be28e0f7ec62e078f5c

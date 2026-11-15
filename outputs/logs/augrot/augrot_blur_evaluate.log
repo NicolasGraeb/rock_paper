@@ -1,0 +1,10 @@
+🏃 View run augrot_blur at: http://127.0.0.1:5000/#/experiments/13/runs/d92d763b83f644d288e277bc64ab9824
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.9938775510204082,
+  "precision_macro": 0.9938799512248145,
+  "recall_macro": 0.9938775510204082,
+  "f1_macro": 0.9938775444732998,
+  "loss": 0.02317916302483747
+}
+błędów: 18/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\d92d763b83f644d288e277bc64ab9824\eval | run MLflow: d92d763b83f644d288e277bc64ab9824

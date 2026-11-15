@@ -1,0 +1,31 @@
+[codecarbon INFO @ 01:48:28] offline tracker init
+[codecarbon WARNING @ 01:48:28] Multiple instances of codecarbon are allowed to run at the same time.
+🏃 View run augrot_canny at: http://127.0.0.1:5000/#/experiments/13/runs/f7a26f15a62743b0af642d8144849d9a
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+                        metric     value                 unit     status                                                                        note
+                  params_total 1.521e+06                       obliczone                                                                            
+            checkpoint_size_mb      5.92                   MB  zmierzone                                                                     best.pt
+        latency_gpu_b1_mean_ms     2.062                   ms  zmierzone                                                  NVIDIA GeForce RTX 5070 Ti
+      latency_gpu_b1_median_ms     2.015                   ms  zmierzone                                                  NVIDIA GeForce RTX 5070 Ti
+         latency_gpu_b1_p95_ms     2.338                   ms  zmierzone                                                  NVIDIA GeForce RTX 5070 Ti
+                    fps_gpu_b1       485            obrazów/s  obliczone                                                    1 / średni czas, batch 1
+                   fps_gpu_b32  1.59e+04            obrazów/s  zmierzone                                                                    batch 32
+              vram_peak_b32_mb     95.53                   MB  zmierzone                               alokator PyTorch (bez narzutu kontekstu CUDA)
+        latency_cpu_b1_mean_ms     3.057                   ms  zmierzone                                                               CPU, 8 wątków
+      latency_cpu_b1_median_ms      3.11                   ms  zmierzone                                                               CPU, 8 wątków
+         latency_cpu_b1_p95_ms     3.525                   ms  zmierzone                                                               CPU, 8 wątków
+                    fps_cpu_b1     327.1            obrazów/s  obliczone                                                    1 / średni czas, batch 1
+                   fps_cpu_b32      1017            obrazów/s  zmierzone                                                                    batch 32
+            ram_process_rss_mb      1398                   MB  zmierzone                                            cały proces Pythona po pomiarach
+  infer_energy_gpu_wh_per_1000  0.002752      Wh/1000 obrazów  zmierzone                         NVML; 472672 obrazów, batch 32, 30 s, cały komputer
+  infer_energy_cpu_wh_per_1000 0.0008815      Wh/1000 obrazów  zmierzone           RAPL (Windows EMI); 472672 obrazów, batch 32, 30 s, cały komputer
+  infer_energy_ram_wh_per_1000 0.0003523      Wh/1000 obrazów oszacowane             model CodeCarbon; 472672 obrazów, batch 32, 30 s, cały komputer
+infer_energy_total_wh_per_1000  0.003986      Wh/1000 obrazów oszacowane suma, zawiera oszacowany RAM; 472672 obrazów, batch 32, 30 s, cały komputer
+          infer_co2_g_per_1000  0.002638 g CO2eq/1000 obrazów oszacowane                                              współczynnik emisji dla Polski
+            train_duration_min     6.118                  min  zmierzone                                                         sama pętla treningu
+           train_energy_gpu_wh     7.855                   Wh  zmierzone                                                                        NVML
+           train_energy_cpu_wh     8.362                   Wh  zmierzone                                                          RAPL (Windows EMI)
+           train_energy_ram_wh     2.034                   Wh oszacowane                                                            model CodeCarbon
+         train_energy_total_wh     18.25                   Wh oszacowane                                                suma, zawiera oszacowany RAM
+                   train_co2_g     12.08              g CO2eq oszacowane                                              współczynnik emisji dla Polski
+wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\f7a26f15a62743b0af642d8144849d9a\green | run MLflow: f7a26f15a62743b0af642d8144849d9a

@@ -1,0 +1,51 @@
+16 modeli: ['baseline_mobilenet_v3_small', 'mobilenet_v3_small_aug_offline', 'baseline_bez_preprocessingu', 'aug_offline_bez_preprocessingu', 'baseline_histeq', 'aug_offline_histeq', 'finetune_aug_offline_last4', 'prep_gamma', 'prep_none', 'prep_clahe', 'prep_grayscale', 'prep_roi_center', 'prep_blur', 'prep_white_balance', 'prep_sharpen', 'prep_canny']
+2026/11/10 23:31:21 INFO mlflow.tracking.fluent: Experiment with name 'papier-kamien-old-dataset-test' does not exist. Creating a new experiment.
+🏃 View run baseline_mobilenet_v3_small at: http://127.0.0.1:5000/#/experiments/9/runs/ba19238f68234fd8b3026cfbc91e4f57
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[1/16] baseline_mobilenet_v3_small: acc 0.2390, f1 0.1649, błędów 1665 (HaGRID test 0.9946)
+🏃 View run mobilenet_v3_small_aug_offline at: http://127.0.0.1:5000/#/experiments/9/runs/b87071819935486c8f5f50e64137d9cc
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[2/16] mobilenet_v3_small_aug_offline: acc 0.4086, f1 0.3316, błędów 1294 (HaGRID test 0.9963)
+🏃 View run baseline_bez_preprocessingu at: http://127.0.0.1:5000/#/experiments/9/runs/f6fb6bea643e4ec8ac46bb0b3feb948c
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[3/16] baseline_bez_preprocessingu: acc 0.3908, f1 0.2920, błędów 1333 (HaGRID test 0.9956)
+🏃 View run aug_offline_bez_preprocessingu at: http://127.0.0.1:5000/#/experiments/9/runs/fb6063ca45194eb88d763bd2d0df7428
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[4/16] aug_offline_bez_preprocessingu: acc 0.3350, f1 0.1919, błędów 1455 (HaGRID test 0.9952)
+🏃 View run baseline_histeq at: http://127.0.0.1:5000/#/experiments/9/runs/a1d776a76a7841468fe007f26b85bcef
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[5/16] baseline_histeq: acc 0.5530, f1 0.5054, błędów 978 (HaGRID test 0.9912)
+🏃 View run aug_offline_histeq at: http://127.0.0.1:5000/#/experiments/9/runs/4cc6fdb8bafe46f1994daabc80ef2dff
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[6/16] aug_offline_histeq: acc 0.3926, f1 0.3007, błędów 1329 (HaGRID test 0.9952)
+🏃 View run finetune_aug_offline_last4 at: http://127.0.0.1:5000/#/experiments/9/runs/fc871ae99c3a4decb33d907ccaa03a59
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[7/16] finetune_aug_offline_last4: acc 0.3894, f1 0.2895, błędów 1336 (HaGRID test 0.9969)
+🏃 View run prep_gamma at: http://127.0.0.1:5000/#/experiments/9/runs/37eb16e70f9b41bcb42c08b67ea1590c
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[8/16] prep_gamma: acc 0.3583, f1 0.2368, błędów 1404 (HaGRID test 0.9946)
+🏃 View run prep_none at: http://127.0.0.1:5000/#/experiments/9/runs/8584f4363b9044c6b43bc4c99539913f
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[9/16] prep_none: acc 0.3743, f1 0.2674, błędów 1369 (HaGRID test 0.9956)
+🏃 View run prep_clahe at: http://127.0.0.1:5000/#/experiments/9/runs/456db40b3d3c4702878ad287581dbcab
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[10/16] prep_clahe: acc 0.3597, f1 0.2281, błędów 1401 (HaGRID test 0.9942)
+🏃 View run prep_grayscale at: http://127.0.0.1:5000/#/experiments/9/runs/be55c55be1524591b4ef48e32f9d94a6
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[11/16] prep_grayscale: acc 0.3547, f1 0.2543, błędów 1412 (HaGRID test 0.9918)
+🏃 View run prep_roi_center at: http://127.0.0.1:5000/#/experiments/9/runs/1096e2a95b044b9ba0676663cddd5230
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[12/16] prep_roi_center: acc 0.3414, f1 0.2011, błędów 1441 (HaGRID test 0.9946)
+🏃 View run prep_blur at: http://127.0.0.1:5000/#/experiments/9/runs/27bebed01a8f48d5ac34328a7603ded1
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[13/16] prep_blur: acc 0.3734, f1 0.2521, błędów 1371 (HaGRID test 0.9949)
+🏃 View run prep_white_balance at: http://127.0.0.1:5000/#/experiments/9/runs/b7f2ad991ba84bd590e7fab67a751bdd
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[14/16] prep_white_balance: acc 0.3835, f1 0.2675, błędów 1349 (HaGRID test 0.9939)
+🏃 View run prep_sharpen at: http://127.0.0.1:5000/#/experiments/9/runs/383db27b22da4baaae43a23467512387
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[15/16] prep_sharpen: acc 0.4502, f1 0.3819, błędów 1203 (HaGRID test 0.9959)
+🏃 View run prep_canny at: http://127.0.0.1:5000/#/experiments/9/runs/202475ed832d4a0aa85603a71d12ff4d
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/9
+[16/16] prep_canny: acc 0.2783, f1 0.2009, błędów 1579 (HaGRID test 0.9500)
+zapisano C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\old_dataset_test\metrics_old_dataset.csv

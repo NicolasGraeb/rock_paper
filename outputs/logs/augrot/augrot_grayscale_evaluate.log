@@ -1,0 +1,10 @@
+🏃 View run augrot_grayscale at: http://127.0.0.1:5000/#/experiments/13/runs/eefd4ac8b94c4e59bc3711c5a38acd7f
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.9860544217687075,
+  "precision_macro": 0.9860556965265489,
+  "recall_macro": 0.9860544217687076,
+  "f1_macro": 0.9860530029663818,
+  "loss": 0.03816478056318386
+}
+błędów: 41/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\eefd4ac8b94c4e59bc3711c5a38acd7f\eval | run MLflow: eefd4ac8b94c4e59bc3711c5a38acd7f

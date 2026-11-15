@@ -1,0 +1,17 @@
+path,true,pred,confidence,p_paper,p_rock,p_scissors,correct
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\rock\00000_016132.jpeg,rock,scissors,0.999154,7.939464e-05,0.0007666333,0.999154,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\rock\00001_000599.jpeg,rock,scissors,0.9986008,3.6030695e-05,0.0013631625,0.9986008,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\paper\00004_010246.jpeg,paper,scissors,0.9942497,0.004319594,0.0014306991,0.9942497,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\paper\00004_011683.jpeg,paper,scissors,0.98634595,0.009228484,0.004425568,0.98634595,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\scissors\00004_016250.jpeg,scissors,rock,0.965853,1.1798165e-06,0.965853,0.03414585,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\scissors\00004_015328.jpeg,scissors,rock,0.95748734,0.0028867598,0.95748734,0.039625913,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\rock\00000_018390.jpeg,rock,paper,0.9383343,0.9383343,0.052691817,0.008973959,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\paper\00004_009172.jpeg,paper,scissors,0.9283702,0.00305127,0.06857858,0.9283702,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\scissors\00005_000517.jpeg,scissors,rock,0.9121534,0.008588662,0.9121534,0.07925787,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\paper\00004_010806.jpeg,paper,rock,0.89981675,0.09967652,0.89981675,0.0005067922,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\rock\00000_019103.jpeg,rock,paper,0.8950472,0.8950472,0.09239942,0.012553306,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\paper\00004_007317.jpeg,paper,scissors,0.7435051,0.008702006,0.2477928,0.7435051,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\rock\00000_017213.jpeg,rock,scissors,0.72400457,0.00033192977,0.27566352,0.72400457,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\paper\00004_010465.jpeg,paper,scissors,0.6460673,0.30651924,0.047413457,0.6460673,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\rock\00000_015603.jpeg,rock,scissors,0.5380238,0.08835178,0.37362447,0.5380238,False
+C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\hagrid_user_split\test\scissors\00004_014155.jpeg,scissors,rock,0.48715973,0.06171664,0.48715973,0.45112365,False

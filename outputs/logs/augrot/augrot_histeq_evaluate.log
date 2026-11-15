@@ -1,0 +1,10 @@
+🏃 View run augrot_histeq at: http://127.0.0.1:5000/#/experiments/13/runs/ff4c3d7a17514a8a85ceac74465c7fdd
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.9887755102040816,
+  "precision_macro": 0.9888170650751861,
+  "recall_macro": 0.9887755102040816,
+  "f1_macro": 0.9887833266914471,
+  "loss": 0.036215668228490726
+}
+błędów: 33/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\ff4c3d7a17514a8a85ceac74465c7fdd\eval | run MLflow: ff4c3d7a17514a8a85ceac74465c7fdd

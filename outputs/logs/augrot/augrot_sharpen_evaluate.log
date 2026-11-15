@@ -1,0 +1,10 @@
+🏃 View run augrot_sharpen at: http://127.0.0.1:5000/#/experiments/13/runs/20e62f5d77d64f7f9d28f2580b303ad2
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/13
+{
+  "accuracy": 0.9931972789115646,
+  "precision_macro": 0.993200044193459,
+  "recall_macro": 0.9931972789115647,
+  "f1_macro": 0.9931981435055423,
+  "loss": 0.02250055347924831
+}
+błędów: 20/2940 | wyniki: C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\outputs\baseline\results\20e62f5d77d64f7f9d28f2580b303ad2\eval | run MLflow: 20e62f5d77d64f7f9d28f2580b303ad2
