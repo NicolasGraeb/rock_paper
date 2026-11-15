@@ -1,0 +1,17 @@
+kind,path,true,pred,confidence
+correct,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\paper\aOiWbMZF8BhxwLTs.png,paper,paper,0.853046178817749
+correct,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\paper\nnf5jELXQuneoejn.png,paper,paper,0.9998302459716797
+correct,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\val\paper\3K6a8bG8j1YTH1l0.png,paper,paper,0.7240225672721863
+correct,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\rock\2HSPQEteONUjEXAF.png,rock,rock,0.9999958276748657
+correct,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\rock\3k7WrSAInCaatFtl.png,rock,rock,1.0
+correct,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\rock\6ZuyUqrA3gcHdfCe.png,rock,rock,0.9999992847442627
+correct,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\scissors\fXrAew7llUJLK8CU.png,scissors,scissors,0.7456102967262268
+correct,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\scissors\wMLAOfEG0tDVHVX0.png,scissors,scissors,0.6143888235092163
+correct,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\test\scissors\K06meJWsLavqjfyX.png,scissors,scissors,0.992130696773529
+errors,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\paper\oLcpS2BYyqZLBj9P.png,paper,rock,0.9963143467903137
+errors,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\val\paper\9hKJu3ZMso4Qbtfh.png,paper,rock,0.9985175728797913
+errors,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\test\paper\RmTijOM3U31zKnrY.png,paper,rock,0.8926166892051697
+errors,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\rock\jqMSEFiMhpIWzJfe.png,rock,scissors,0.9999996423721313
+errors,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\scissors\1xkTkvyzmavV7lQ5.png,scissors,rock,0.5029388666152954
+errors,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\scissors\44Hu6owS3pPqmyG1.png,scissors,rock,0.537147581577301
+errors,C:\Users\nicol\Desktop\studia\projekt_gielczyk\papier_kamien\dataset\dataset_origin\train\scissors\6weMqPPWdXLD7lNy.png,scissors,paper,0.45360246300697327

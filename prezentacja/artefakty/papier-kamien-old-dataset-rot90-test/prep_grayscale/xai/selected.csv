@@ -1,0 +1,16 @@
+kind,path,true,pred,confidence
+correct,dataset\dataset_origin_rot90\train\paper\o0CfvFooVIcHCGzO.png,paper,paper,0.9999998807907104
+correct,dataset\dataset_origin_rot90\val\paper\5jcXrtjEVtQwI0Wa.png,paper,paper,0.9999252557754517
+correct,dataset\dataset_origin_rot90\test\paper\QVFB67Eza3BCNeRY.png,paper,paper,0.8346267342567444
+correct,dataset\dataset_origin_rot90\train\rock\2HSPQEteONUjEXAF.png,rock,rock,0.9999986886978149
+correct,dataset\dataset_origin_rot90\train\rock\3k7WrSAInCaatFtl.png,rock,rock,1.0
+correct,dataset\dataset_origin_rot90\train\rock\6ZuyUqrA3gcHdfCe.png,rock,rock,0.9998288154602051
+correct,dataset\dataset_origin_rot90\train\scissors\k7KXWWd1IymDhMIm.png,scissors,scissors,0.5462042689323425
+correct,dataset\dataset_origin_rot90\train\scissors\xfdYfkrgEZ2fuuck.png,scissors,scissors,0.9927893280982971
+correct,dataset\dataset_origin_rot90\test\scissors\JDuoo6aDjbIAqA4X.png,scissors,scissors,0.9994219541549683
+errors,dataset\dataset_origin_rot90\train\paper\eiiwN1DsKoIheMgz.png,paper,rock,0.7120456099510193
+errors,dataset\dataset_origin_rot90\train\paper\pYvpGm431tLNheln.png,paper,rock,0.6730989813804626
+errors,dataset\dataset_origin_rot90\val\paper\QASICiZe79sFTXBz.png,paper,scissors,0.5162574648857117
+errors,dataset\dataset_origin_rot90\train\scissors\2tRxoWcFfrvjsHTZ.png,scissors,rock,0.992923378944397
+errors,dataset\dataset_origin_rot90\train\scissors\3n4i3lKB3nZOpDVv.png,scissors,paper,0.5555559992790222
+errors,dataset\dataset_origin_rot90\train\scissors\Bd18RfxcJr6O5n6j.png,scissors,rock,0.6734668016433716

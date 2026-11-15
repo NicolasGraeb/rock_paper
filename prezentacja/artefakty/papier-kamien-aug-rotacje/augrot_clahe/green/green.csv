@@ -1,0 +1,26 @@
+metric,value,unit,status,note
+params_total,1520931.0,,obliczone,
+checkpoint_size_mb,5.920205116271973,MB,zmierzone,best.pt
+latency_gpu_b1_mean_ms,2.0732326666196363,ms,zmierzone,NVIDIA GeForce RTX 5070 Ti
+latency_gpu_b1_median_ms,2.0276000004741945,ms,zmierzone,NVIDIA GeForce RTX 5070 Ti
+latency_gpu_b1_p95_ms,2.3951850001139974,ms,zmierzone,NVIDIA GeForce RTX 5070 Ti
+fps_gpu_b1,482.33853156022263,obrazów/s,obliczone,"1 / średni czas, batch 1"
+fps_gpu_b32,15849.378075275114,obrazów/s,zmierzone,batch 32
+vram_peak_b32_mb,95.5322265625,MB,zmierzone,alokator PyTorch (bez narzutu kontekstu CUDA)
+latency_cpu_b1_mean_ms,3.0996856666509607,ms,zmierzone,"CPU, 8 wątków"
+latency_cpu_b1_median_ms,3.1316000004153466,ms,zmierzone,"CPU, 8 wątków"
+latency_cpu_b1_p95_ms,3.514605000145821,ms,zmierzone,"CPU, 8 wątków"
+fps_cpu_b1,322.61335746357946,obrazów/s,obliczone,"1 / średni czas, batch 1"
+fps_cpu_b32,962.1688247547316,obrazów/s,zmierzone,batch 32
+ram_process_rss_mb,1394.7734375,MB,zmierzone,cały proces Pythona po pomiarach
+infer_energy_gpu_wh_per_1000,0.002776353469707803,Wh/1000 obrazów,zmierzone,"NVML; 453120 obrazów, batch 32, 30 s, cały komputer"
+infer_energy_cpu_wh_per_1000,0.0009687468183571683,Wh/1000 obrazów,zmierzone,"RAPL (Windows EMI); 453120 obrazów, batch 32, 30 s, cały komputer"
+infer_energy_ram_wh_per_1000,0.00036740136902657997,Wh/1000 obrazów,oszacowane,"model CodeCarbon; 453120 obrazów, batch 32, 30 s, cały komputer"
+infer_energy_total_wh_per_1000,0.004112501657091551,Wh/1000 obrazów,oszacowane,"suma, zawiera oszacowany RAM; 453120 obrazów, batch 32, 30 s, cały komputer"
+infer_co2_g_per_1000,0.002722171771871982,g CO2eq/1000 obrazów,oszacowane,współczynnik emisji dla Polski
+train_duration_min,8.39299713666666,min,zmierzone,sama pętla treningu
+train_energy_gpu_wh,10.800774473946007,Wh,zmierzone,NVML
+train_energy_cpu_wh,11.583886920833999,Wh,zmierzone,RAPL (Windows EMI)
+train_energy_ram_wh,2.792305593333443,Wh,oszacowane,model CodeCarbon
+train_energy_total_wh,25.176966988113467,Wh,oszacowane,"suma, zawiera oszacowany RAM"
+train_co2_g,16.665289050573996,g CO2eq,oszacowane,współczynnik emisji dla Polski

@@ -1,0 +1,15 @@
+{
+  "train_energy_kwh": 0.01694537222149368,
+  "train_energy_gpu_kwh": 0.007692498098437986,
+  "train_energy_cpu_kwh": 0.007336221187500004,
+  "train_energy_ram_kwh": 0.001916652935555704,
+  "train_co2_kg": 0.011216582453084427,
+  "train_duration_s": 345.8902885000007,
+  "test_energy_kwh": 0.00046923150391001004,
+  "test_energy_gpu_kwh": 0.00012745704640999833,
+  "test_energy_cpu_kwh": 0.00023982978750000002,
+  "test_energy_ram_kwh": 0.00010194467000001169,
+  "test_co2_kg": 0.0003105965324571373,
+  "test_duration_s": 18.378761799998756,
+  "test_energy_wh_per_1000_images": 0.15960255235034354
+}

@@ -1,0 +1,24 @@
+{
+  "image_size": 224,
+  "resize": "bilinear, do kwadratu image_size x image_size",
+  "color_order": "RGB",
+  "scale": "piksel / 255",
+  "mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "std": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "class_names": [
+    "paper",
+    "rock",
+    "scissors"
+  ],
+  "input_name": "input",
+  "output_name": "logits",
+  "source_run_id": "49b032821ce5432bb4b1523cc316c586"
+}

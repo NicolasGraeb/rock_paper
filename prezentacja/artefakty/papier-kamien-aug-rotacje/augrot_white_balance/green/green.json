@@ -1,0 +1,177 @@
+[
+  {
+    "metric": "params_total",
+    "value": 1520931,
+    "unit": "",
+    "status": "obliczone",
+    "note": ""
+  },
+  {
+    "metric": "checkpoint_size_mb",
+    "value": 5.920205116271973,
+    "unit": "MB",
+    "status": "zmierzone",
+    "note": "best.pt"
+  },
+  {
+    "metric": "latency_gpu_b1_mean_ms",
+    "value": 2.076792333367242,
+    "unit": "ms",
+    "status": "zmierzone",
+    "note": "NVIDIA GeForce RTX 5070 Ti"
+  },
+  {
+    "metric": "latency_gpu_b1_median_ms",
+    "value": 2.0237000007909955,
+    "unit": "ms",
+    "status": "zmierzone",
+    "note": "NVIDIA GeForce RTX 5070 Ti"
+  },
+  {
+    "metric": "latency_gpu_b1_p95_ms",
+    "value": 2.413740000156395,
+    "unit": "ms",
+    "status": "zmierzone",
+    "note": "NVIDIA GeForce RTX 5070 Ti"
+  },
+  {
+    "metric": "fps_gpu_b1",
+    "value": 481.5117929382151,
+    "unit": "obrazów/s",
+    "status": "obliczone",
+    "note": "1 / średni czas, batch 1"
+  },
+  {
+    "metric": "fps_gpu_b32",
+    "value": 16046.722709370413,
+    "unit": "obrazów/s",
+    "status": "zmierzone",
+    "note": "batch 32"
+  },
+  {
+    "metric": "vram_peak_b32_mb",
+    "value": 95.5322265625,
+    "unit": "MB",
+    "status": "zmierzone",
+    "note": "alokator PyTorch (bez narzutu kontekstu CUDA)"
+  },
+  {
+    "metric": "latency_cpu_b1_mean_ms",
+    "value": 3.452122000004844,
+    "unit": "ms",
+    "status": "zmierzone",
+    "note": "CPU, 8 wątków"
+  },
+  {
+    "metric": "latency_cpu_b1_median_ms",
+    "value": 3.266349998739315,
+    "unit": "ms",
+    "status": "zmierzone",
+    "note": "CPU, 8 wątków"
+  },
+  {
+    "metric": "latency_cpu_b1_p95_ms",
+    "value": 4.440830000476126,
+    "unit": "ms",
+    "status": "zmierzone",
+    "note": "CPU, 8 wątków"
+  },
+  {
+    "metric": "fps_cpu_b1",
+    "value": 289.6769001786718,
+    "unit": "obrazów/s",
+    "status": "obliczone",
+    "note": "1 / średni czas, batch 1"
+  },
+  {
+    "metric": "fps_cpu_b32",
+    "value": 962.5747913100298,
+    "unit": "obrazów/s",
+    "status": "zmierzone",
+    "note": "batch 32"
+  },
+  {
+    "metric": "ram_process_rss_mb",
+    "value": 1398.58984375,
+    "unit": "MB",
+    "status": "zmierzone",
+    "note": "cały proces Pythona po pomiarach"
+  },
+  {
+    "metric": "infer_energy_gpu_wh_per_1000",
+    "value": 0.002901709823620779,
+    "unit": "Wh/1000 obrazów",
+    "status": "zmierzone",
+    "note": "NVML; 445472 obrazów, batch 32, 30 s, cały komputer"
+  },
+  {
+    "metric": "infer_energy_cpu_wh_per_1000",
+    "value": 0.0010304811806353708,
+    "unit": "Wh/1000 obrazów",
+    "status": "zmierzone",
+    "note": "RAPL (Windows EMI); 445472 obrazów, batch 32, 30 s, cały komputer"
+  },
+  {
+    "metric": "infer_energy_ram_wh_per_1000",
+    "value": 0.0003737820783348266,
+    "unit": "Wh/1000 obrazów",
+    "status": "oszacowane",
+    "note": "model CodeCarbon; 445472 obrazów, batch 32, 30 s, cały komputer"
+  },
+  {
+    "metric": "infer_energy_total_wh_per_1000",
+    "value": 0.004305973082590977,
+    "unit": "Wh/1000 obrazów",
+    "status": "oszacowane",
+    "note": "suma, zawiera oszacowany RAM; 445472 obrazów, batch 32, 30 s, cały komputer"
+  },
+  {
+    "metric": "infer_co2_g_per_1000",
+    "value": 0.0028502355386671153,
+    "unit": "g CO2eq/1000 obrazów",
+    "status": "oszacowane",
+    "note": "współczynnik emisji dla Polski"
+  },
+  {
+    "metric": "train_duration_min",
+    "value": 6.30672916333333,
+    "unit": "min",
+    "status": "zmierzone",
+    "note": "sama pętla treningu"
+  },
+  {
+    "metric": "train_energy_gpu_wh",
+    "value": 7.329222807818003,
+    "unit": "Wh",
+    "status": "zmierzone",
+    "note": "NVML"
+  },
+  {
+    "metric": "train_energy_cpu_wh",
+    "value": 8.420121970834005,
+    "unit": "Wh",
+    "status": "zmierzone",
+    "note": "RAPL (Windows EMI)"
+  },
+  {
+    "metric": "train_energy_ram_wh",
+    "value": 2.0969990438889696,
+    "unit": "Wh",
+    "status": "oszacowane",
+    "note": "model CodeCarbon"
+  },
+  {
+    "metric": "train_energy_total_wh",
+    "value": 17.84634382254098,
+    "unit": "Wh",
+    "status": "oszacowane",
+    "note": "suma, zawiera oszacowany RAM"
+  },
+  {
+    "metric": "train_co2_g",
+    "value": 11.81295898107926,
+    "unit": "g CO2eq",
+    "status": "oszacowane",
+    "note": "współczynnik emisji dla Polski"
+  }
+]
